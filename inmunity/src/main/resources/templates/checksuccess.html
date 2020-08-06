@@ -1,0 +1,31 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{layout/member_layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+	<div class="wrapper fadeInDown" layout:fragment="content">
+		<div id="formContent">
+	    
+	    	<div class="fadeIn first">
+	    		<h3>[[#{member.emailsuccess}]]</h3>
+	    	</div>
+	
+	    	<div class="fadeIn second">
+	    		<button class="btn btn-primary ret-btn">[[#{member.ret}]]</button>
+	    	</div>
+		</div>
+	</div>
+<th:block layout:fragment="script">
+<script th:inline="javascript">
+	    $(".ret-btn").click(function(e){
+	    	e.preventDefault();
+	    	location.href = "/";
+	    });
+</script>
+</th:block>
+</body>
+</html>

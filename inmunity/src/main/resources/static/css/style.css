@@ -1,0 +1,37 @@
+.my-btn-grp{
+	margin-top:10px;
+}
+.reply-inserted{
+	margin-top:10px;
+	padding:5px;
+	border:1px solid #e3e3e3;
+}
+.reply:not(:first-child){
+	border-top:1px solid #e3e3e3;
+}
+.rereply{
+	margin-left:20px;
+	background-color:#f9f9f9;
+	border : 1px solid #e3e3e3;
+}
+.reply-btn{
+	color:#bbc4bd;
+	font-size:0.8rem;
+	margin-left : 5px;
+}
+.reply-btn a:hover{
+	color:#000000;
+}
+.update-date{
+	color:#bbc4bd;
+	font-size:0.8rem;
+}
+.reply-pagination{
+	margin-top:20px;
+	margin-bottom:20px;
+}
+.profile{
+	margin-top:1.25rem;
+	width:5rem;
+	height:5rem;
+}

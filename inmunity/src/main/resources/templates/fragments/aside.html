@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+</head>
+<aside th:fragment="header">
+	<div class="card text-center" style="width: 18rem;" sec:authorize="isAnonymous()">
+		<h4>
+			[[#{member.loginfirst}]]
+		</h4>
+		<div class="btn-group" role="group" aria-label="Basic example">
+			<button type="button" class="btn btn-secondary login-btn">[[#{member.login}]]</button>
+			<button type="button" class="btn btn-secondary join-btn">[[#{member.join}]]</button>
+		</div>
+	</div>
+	<div class="card text-center" style="width: 18rem;" sec:authorize="isAuthenticated()">
+		<img class="mx-auto card-img-top profile" th:src="${#authentication.principal.member.picture}" alt="Image not found" onerror="this.onerror=null;this.src='/img/default-person.png';" />
+		
+		<div class="card-body">
+			<h3>[[${#authentication.principal.member.name}]]</h3>
+			<div class="btn-group" role="group" aria-label="Basic example">
+  				<button type="button" class="btn btn-secondary">[[#{member.myinfo}]]</button>
+  				<button type="button" class="btn btn-secondary logout-btn">[[#{member.logout}]]</button>
+			</div>
+		</div>
+	</div>
+</aside>
+</html>

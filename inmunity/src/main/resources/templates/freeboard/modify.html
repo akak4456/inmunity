@@ -1,0 +1,98 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{layout/main_layout}">
+<head>
+<meta charset="UTF-8">
+<style>
+.ck-content {
+	min-height: 400px;
+}
+.btn{
+	margin-top:10px;
+	margin-left:10px;
+}
+</style>
+</head>
+<div layout:fragment="content">
+	<section>
+		<form>
+			<div class="form-group">
+				<label for="title">[[#{board.title}]]</label>
+				<input type="text" class="form-control" id="title" th:value="${result.title}">
+			</div>
+			<div id="editor"></div>
+		</form>
+		<div>
+			<button class="float-right btn btn-primary exit-btn">[[#{btn.cancle}]]</button>
+			<button class="float-right btn btn-danger delete-btn">[[#{btn.delete}]]</button>	
+			<button class="float-right btn btn-success modify-btn">[[#{btn.update}]]</button>	
+		</div>
+		
+	</section>
+</div>
+<th:block layout:fragment="script">
+<script th:inline="javascript" src="https://cdn.ckeditor.com/ckeditor5/19.1.1/classic/ckeditor.js"></script>
+<script th:inline="javascript" th:src="@{'/js/fileUploadAdapter.js'}"></script>
+<script th:inline="javascript" th:src="@{'/js/freeboard/board.js'}"></script>
+<script th:inline="javascript">
+const bno = "[[${bno}]]";
+const modifysuccessmsg = "[(#{board.modify.success})]";
+const deletesuccessmsg = "[(#{board.delete.success})]";
+const deleteconfirmmsg = "[(#{board.delete.confirm})]";
+let editoro;
+ClassicEditor
+.create( document.querySelector( '#editor' ) ,{
+	extraPlugins: [FileUploadAdapterPlugin ]
+})
+.catch( error => {
+	console.error( error );
+} )
+.then(function(editor){
+	editoro = editor;
+	editoro.setData([[${result.content}]]);
+});		
+$(".modify-btn").click(function(e){
+	let sendData = {
+		title:$("#title").val(),
+		content:editoro.getData(),
+		bno:bno,
+		useremail:[[${result.useremail}]],
+		username:[[${result.username}]],
+		fileUpload:boardModule.getFileForm(editoro)
+	}
+	boardModule.modifyBoard(sendData,function(data){
+		alert(modifysuccessmsg);
+		moveUsingForm(
+			"pageForm",
+			"/freeboard/boards",
+			-1
+		);
+	});
+});
+$(".delete-btn").click(function(e){
+	if(confirm(deleteconfirmmsg)){
+		let sendData = {
+			bno:bno,
+			useremail:[[${result.useremail}]]
+		}
+		boardModule.deleteBoard(sendData,function(data){
+			alert(deletesuccessmsg);
+			moveUsingForm(
+				"pageForm",
+				"/freeboard/boards",
+				-1
+			);
+		});
+	}
+});
+$(".exit-btn").click(function(e){
+	moveUsingForm(
+		"pageForm",
+		"/freeboard/boards/"+bno,
+		-1
+	);
+});
+</script>
+</th:block>
+</html>
