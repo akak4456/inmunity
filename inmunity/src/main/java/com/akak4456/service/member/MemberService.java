@@ -55,7 +55,6 @@ public class MemberService implements UserDetailsService {
 								.role(Role.ROLE_MEMBER)
 								.emailcheck(EmailCheck.N)
 								.build();
-		
 		memberRepository.save(member);
 	}
 	
@@ -72,6 +71,11 @@ public class MemberService implements UserDetailsService {
 	@Transactional
 	public void updateEmailCheck(EmailCheck emailCheck,String id) {
 		memberRepository.setEmailCheckById(emailCheck, id);
+	}
+	@Transactional
+	public boolean isEmailAuthenticated(String useremail) {
+		return memberRepository.findByUseremail(useremail)
+				.filter(m -> m.getEmailCheck() == EmailCheck.Y).isPresent();
 	}
 
 }

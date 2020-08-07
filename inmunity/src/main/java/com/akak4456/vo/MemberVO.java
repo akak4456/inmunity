@@ -4,27 +4,29 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import com.akak4456.constant.RegexpConstant;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class MemberVO {
-	@NotNull(message=RegexpCheckConstants.ID_NOTNULL_FAIL)
-	@NotEmpty(message=RegexpCheckConstants.ID_NOTNULL_FAIL)
-	@Pattern(regexp=RegexpCheckConstants.ID_REGEXP,
-	message=RegexpCheckConstants.ID_REGEXP_FAIL)
+	@NotNull(message="idnotnull")
+	@NotEmpty(message="idnotnull")
+	@Pattern(regexp=RegexpConstant.ID_REGEXP,
+	message="idregexp")
 	private String userid;
 	
-	@NotNull(message=RegexpCheckConstants.PW_NOTNULL_FAIL)
-	@NotEmpty(message=RegexpCheckConstants.PW_NOTNULL_FAIL)
-	@Pattern(regexp=RegexpCheckConstants.PW_REGEXP,
-			message=RegexpCheckConstants.PW_REGEXP_FAIL)
+	@NotNull(message="pwnotnull")
+	@NotEmpty(message="pwnotnull")
+	@Pattern(regexp=RegexpConstant.PW_REGEXP,
+			message="pwregexp")
 	private String userpw;
 	
-	@NotNull(message=RegexpCheckConstants.EMAIL_NOTNULL_FAIL)
-	@NotEmpty(message=RegexpCheckConstants.EMAIL_NOTNULL_FAIL)
-	@Pattern(regexp=RegexpCheckConstants.EMAIL_REGEXP,message=RegexpCheckConstants.EMAIL_REGEXP_FAIL)
+	@NotNull(message="emailnotnull")
+	@NotEmpty(message="emailnotnull")
+	@Pattern(regexp=RegexpConstant.EMAIL_REGEXP,message="emailregexp")
 	private String useremail;
 	
 	@Override

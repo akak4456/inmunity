@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.akak4456.domain.member.EmailCheck;
 import com.akak4456.service.email.EmailServiceImpl;
 import com.akak4456.service.member.MemberService;
+import com.akak4456.vo.CheckEmailVO;
 import com.akak4456.vo.MemberVO;
 import com.akak4456.vo.PageVO;
 
@@ -60,6 +62,17 @@ public class MemberController {
 			return "/checkfail";
 		}
 	}
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/my/default")
+	public void my(Model model, PageVO pageVO) {
+		model.addAttribute("pageVO",pageVO);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/my/changeinfo")
+	public void changeinfo(Model model, PageVO pageVO) {
+		model.addAttribute("pageVO",pageVO);
+	}
 	
 	@PostMapping("/join")
 	@ResponseBody
@@ -82,13 +95,25 @@ public class MemberController {
 			return new ResponseEntity<>("emailconflict",HttpStatus.BAD_REQUEST);
 		}
 		memberService.joinPost(memberVO);
-		String generatedCode = generateCode();
-		memberService.updateAuthKey(generatedCode, memberVO.getUserid());
-		sendEmailCode(memberVO.getUserid(),memberVO.getUseremail(),generatedCode);
+		generateCodeAndSendEmail(memberVO.getUserid(),memberVO.getUseremail());
+		
 		return new ResponseEntity<>("success",HttpStatus.OK);
 	}
-	private String generateCode() {
-		return RandomStringUtils.randomAlphanumeric(30);
+	
+	@PostMapping("/my/checkemail")
+	@ResponseBody
+	@Transactional
+	public ResponseEntity<String> sendCode(@RequestBody CheckEmailVO checkEmailVO){
+		if(memberService.isEmailAuthenticated(checkEmailVO.getUseremail())) {
+			return new ResponseEntity<>("alreadycheck",HttpStatus.BAD_REQUEST);
+		}
+		generateCodeAndSendEmail(checkEmailVO.getUserid(),checkEmailVO.getUseremail());
+		return new ResponseEntity<>("success",HttpStatus.OK);
+	}
+	private void generateCodeAndSendEmail(String userid,String useremail) {
+		String generatedCode = RandomStringUtils.randomAlphanumeric(30);
+		memberService.updateAuthKey(generatedCode, userid);
+		sendEmailCode(userid,useremail,generatedCode);
 	}
 	private void sendEmailCode(String id,String to,String code) {
 		StringBuffer content = new StringBuffer();

@@ -1,5 +1,6 @@
 package com.akak4456.domain.member;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -36,6 +37,7 @@ public class MemberEntity {
 	private String userpw;//기본 회원 인증용
 	
 	@NotNull
+	@Column(unique=true)
 	private String useremail;
 	
 	@Enumerated(EnumType.ORDINAL)

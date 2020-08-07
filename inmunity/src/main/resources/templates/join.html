@@ -38,6 +38,12 @@
 		const emailsendmsg = "[(#{member.emailsend})]";
 		const alreadyidmsg = "[(#{member.alreadyid})]";
 		const alreadyemailmsg = "[(#{member.alreadyemail})]";
+		const idnotnullmsg = "[(#{member.idnotnull})]";
+		const idregexpmsg = "[(#{member.idregexp})]";
+		const pwnotnullmsg = "[(#{member.pwnotnull})]";
+		const pwregexpmsg = "[(#{member.pwregexp})]";
+		const emailnotnullmsg = "[(#{member.emailnotnull})]";
+		const emailregexpmsg = "[(#{member.emailregexp})]";
 		$.ajaxSetup({
 			beforeSend : function(xhr) {
 				xhr.setRequestHeader(csrf.headerName,csrf.token);
@@ -74,11 +80,33 @@
 					);
 				},
 				error : function(result) {
-					if(result.responseText === "idconflict"){
+					console.log(result.responseText);
+					switch(result.responseText){
+					case "idconflict":
 						alert(alreadyidmsg);
-					}else if(result.responseText === "emailconflict"){
+						break;
+					case "emailconflict":
 						alert(alreadyemailmsg);
-					}else{
+						break;
+					case "idnotnull":
+						alert(idnotnullmsg);
+						break;
+					case "idregexp":
+						alert(idregexpmsg);
+						break;
+					case "pwnotnull":
+						alert(pwnotnullmsg);
+						break;
+					case "pwregexp":
+						alert(pwregexpmsg);
+						break;
+					case "emailnotnull":
+						alert(emailnotnullmsg);
+						break;
+					case "emailregexp":
+						alert(emailregexpmsg);
+						break;
+					default:
 						alert(result.responseText);
 					}
 				}

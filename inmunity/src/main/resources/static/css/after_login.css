@@ -1,0 +1,28 @@
+.my-sidebar {
+    -ms-flex: 0 0 230px;
+    flex: 0 0 230px; 
+}
+.btn-card{
+	margin-top:30px;
+}
+.btn-card-body{
+	padding:0
+} 
+.btn-group-vertical {
+	width:230px;
+}
+.btn-group-vertical .btn:hover{
+	background-color:#F8F8F8;
+}
+
+#profile{
+	width: auto; height: auto;
+    max-width: 100px;
+    max-height: 100px;
+}
+
+@media (max-width: 690px) {
+  .my-sidebar {
+    display: none; 
+  } 
+}

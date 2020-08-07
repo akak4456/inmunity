@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>인뮤니티</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+	crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.12.1/css/all.css"
+	integrity="sha384-v8BU367qNbs/aIZIxuivaU55N5GPF89WBerHoGA4QTcbUjYiLQtKdrfXnqAcXyTv"
+	crossorigin="anonymous">
+<link rel="stylesheet" th:href="@{'/css/after_login.css'}">
+<style>
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row" th:insert="fragments/header :: header"></div>
+		
+		
+		<div class="container-fluid">
+  			<div class="row">
+    			<div class="col my-sidebar">
+    				<div class="card">
+  						<div class="card-body">
+    						<h5 class="card-title">내 정보</h5>
+  						</div>
+					</div>
+					<div class="card btn-card">
+						<div class="card-body btn-card-body">
+							<div class="btn-group-vertical">
+		 						<button class="btn default">기본 정보</button>
+		 						<button class="btn check-email">이메일 인증</button>
+		 						<button class="btn change-info">개인정보 변경</button>
+		 						<button class="btn">비밀번호 변경</button>
+		 						<button class="btn">프로필 이미지 변경</button>
+		 						<button class="btn">회원 탈퇴</button>
+							</div>
+						</div>
+					</div>
+    			</div>
+    			<div class="col text-center" layout:fragment="content"></div>
+  			</div>
+		</div>
+		
+	
+		<div class="row" th:insert="fragments/footer :: footer"></div>
+	</div>	
+	<div th:insert="fragments/pageForm :: pageForm"></div>
+	<div class="row" th:insert="modal/waitingModal :: waitingModal"></div>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js">
+		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+		integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+		crossorigin="anonymous"/>
+	</script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+		crossorigin="anonymous"></script>
+	<script src="https://kit.fontawesome.com/addd4c8dc0.js"
+		crossorigin="anonymous"></script>
+	<script th:inline="javascript" th:src="@{'/js/moveUsingForm.js'}"></script>
+	<script th:inline="javascript">
+	const csrf = JSON.parse('[[${_csrf}]]');
+	$("#myModal").modal('hide');
+	$(document).on({
+		ajaxStart : function() {
+			$("#myModal").modal('show');
+		},
+		ajaxStop : function() {
+			$("#myModal").modal('hide');
+		},
+		ajaxError : function(){
+			$("#myModal").modal('hide');
+		}
+		
+	});
+	$.ajaxSetup({
+		beforeSend : function(xhr) {
+			xhr.setRequestHeader(csrf.headerName,csrf.token);
+		}
+	});
+	const emailsendmsg = "[(#{member.emailsend})]";
+	const userid = [[${#authentication.principal.member.userid} == null?null:${#authentication.principal.member.userid}]];
+	const useremail = [[${#authentication.principal.member.useremail}]];
+	
+	
+	console.log(userid);
+	$(".default").click(function(e){
+		e.preventDefault();
+		moveUsingForm(
+				"pageForm",
+				"/my/default",
+				-1
+		);
+	});
+	$(".check-email").click(function(e){
+		e.preventDefault();
+		if(userid == null){
+			alert("이미 이메일 인증을 하셨습니다.");
+			return;
+		}
+		let sendData = {
+				userid:userid,
+				useremail:useremail
+		}
+		$.ajax({
+			url:"/my/checkemail",
+			type:"post",
+			contentType:"application/json",
+			data:JSON.stringify(sendData),
+			success:function(data){
+				alert(emailsendmsg);
+			},
+			error:function(data){
+				if(data.responseText == "alreadycheck"){
+					alert("이미 이메일 인증을 하셨습니다.");
+				}else{
+					alert("error occur!");
+					console.log(data);
+				}
+			}
+		});
+	});
+	$(".change-info").click(function(e){
+		e.preventDefault();
+		moveUsingForm(
+				"pageForm",
+				"/my/changeinfo",
+				-1
+		);
+	});
+	</script>
+	<th:block layout:fragment="script">
+		
+	</th:block>
+</body>
+</html>
