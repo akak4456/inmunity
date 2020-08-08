@@ -1,5 +1,6 @@
 package com.akak4456.controller;
 
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.akak4456.domain.member.EmailCheck;
 import com.akak4456.service.email.EmailServiceImpl;
 import com.akak4456.service.member.MemberService;
+import com.akak4456.vo.ChangeInfoVO;
+import com.akak4456.vo.ChangePwVO;
 import com.akak4456.vo.CheckEmailVO;
 import com.akak4456.vo.MemberVO;
 import com.akak4456.vo.PageVO;
@@ -74,6 +77,12 @@ public class MemberController {
 		model.addAttribute("pageVO",pageVO);
 	}
 	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/my/changepw")
+	public void changepw(Model model, PageVO pageVO) {
+		model.addAttribute("pageVO",pageVO);
+	}
+	
 	@PostMapping("/join")
 	@ResponseBody
 	@Transactional
@@ -100,6 +109,7 @@ public class MemberController {
 		return new ResponseEntity<>("success",HttpStatus.OK);
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/my/checkemail")
 	@ResponseBody
 	@Transactional
@@ -108,6 +118,45 @@ public class MemberController {
 			return new ResponseEntity<>("alreadycheck",HttpStatus.BAD_REQUEST);
 		}
 		generateCodeAndSendEmail(checkEmailVO.getUserid(),checkEmailVO.getUseremail());
+		return new ResponseEntity<>("success",HttpStatus.OK);
+	}
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/my/changeinfo")
+	public ResponseEntity<String> changeInfoPost(@Valid @RequestBody ChangeInfoVO changeInfoVO,BindingResult bindingResult,HttpSession session){
+		if(bindingResult.hasErrors()) {
+			log.info("ERROR");
+			for (Object object : bindingResult.getAllErrors()) {
+				if (object instanceof FieldError) {
+					FieldError fieldError = (FieldError) object;
+					return new ResponseEntity<>(fieldError.getDefaultMessage(), HttpStatus.BAD_REQUEST);
+				}
+			}
+		}
+		if(!memberService.isMatchUseremailAndPassword(changeInfoVO.getUseremail(), changeInfoVO.getUserpw())) {
+			return new ResponseEntity<>("notmatch",HttpStatus.BAD_REQUEST);
+		}
+		memberService.changeInfo(changeInfoVO.getUseremail(), changeInfoVO.getUsername());
+		session.invalidate();
+		return new ResponseEntity<>("success",HttpStatus.OK);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/my/changepw")
+	public ResponseEntity<String> changePwPost(@Valid @RequestBody ChangePwVO changePwVO,BindingResult bindingResult,HttpSession session){
+		if(bindingResult.hasErrors()) {
+			log.info("ERROR");
+			for (Object object : bindingResult.getAllErrors()) {
+				if (object instanceof FieldError) {
+					FieldError fieldError = (FieldError) object;
+					return new ResponseEntity<>(fieldError.getDefaultMessage(), HttpStatus.BAD_REQUEST);
+				}
+			}
+		}
+		if(!memberService.isMatchUseremailAndPassword(changePwVO.getUseremail(), changePwVO.getPw())) {
+			return new ResponseEntity<>("notmatch",HttpStatus.BAD_REQUEST);
+		}
+		memberService.changePw(changePwVO.getUseremail(), changePwVO.getNewpw());
+		session.invalidate();
 		return new ResponseEntity<>("success",HttpStatus.OK);
 	}
 	private void generateCodeAndSendEmail(String userid,String useremail) {

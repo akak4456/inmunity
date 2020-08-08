@@ -12,6 +12,8 @@ public class FreeReplyServiceImplTest extends ReplyServiceTest<FreeBoard, FreeRe
 		FreeBoard board = new FreeBoard();
 		board.setTitle(title);
 		board.setContent(content);
+		board.setUseremail("akak4456@naver.com");
+		board.setUsername("akak4456");
 		return board;
 	}
 
@@ -23,6 +25,7 @@ public class FreeReplyServiceImplTest extends ReplyServiceTest<FreeBoard, FreeRe
 		replyret.setParent_rno(parent_rno);
 		replyret.setReplyer(replyer);
 		replyret.setReply(reply);
+		replyret.setUseremail("akak4456@naver.com");
 		return replyret;
 	}
 

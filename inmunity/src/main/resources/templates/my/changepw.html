@@ -1,0 +1,96 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{layout/after_login_layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+	<div layout:fragment="content">
+	    <div class="card">
+	    	<div class="card-header">
+	    		<h3>[[#{my.changepw}]]</h3>
+	    	</div>
+	    	<div class="card-body">
+	    		<form>
+  					<div class="form-group row">
+    					<label for="staticPw" class="col-sm-2 col-form-label">[[#{member.pw}]]</label>
+    					<div class="col-sm-10">
+      						<input type="password" class="form-control-plaintext" id="staticPw">
+    					</div>
+  					</div>
+  					<div class="form-group row">
+    					<label for="staticNewPw" class="col-sm-2 col-form-label">[[#{my.newpw}]]</label>
+    					<div class="col-sm-10">
+      						<input type="password" class="form-control-plaintext" id="staticNewPw">
+    					</div>
+  					</div>
+  					<div class="form-group row">
+    					<label for="staticNewPwCheck" class="col-sm-2 col-form-label">[[#{my.newpwcheck}]]</label>
+    					<div class="col-sm-10">
+      						<input type="password" class="form-control-plaintext" id="staticNewPwCheck">
+    					</div>
+  					</div>
+  					<button class="btn btn-primary changepw-btn">[[#{my.changepw}]]</button>
+				</form>
+	    	</div>
+	    </div>			
+	</div>
+<th:block layout:fragment="script">
+	<script th:inline="javascript">
+		const pwnotnullmsg = "[(#{member.pwnotnull})]";
+		const pwregexpmsg = "[(#{member.pwregexp})]";
+		const emailandpwnotmatchmsg = "[(#{my.emailandpwnotmatch})]";
+		const pwandnewpwsamemsg = "[(#{my.pwandnewpwsame})]";
+		const newpwandnewpwchecknotsamemsg = "[(#{my.newpwandnewpwchecknotsame})]";
+		const successchangepwmsg = "[(#{my.successchangepw})]";
+		$(".changepw-btn").click(function(e){
+			e.preventDefault();
+			const pw = $("#staticPw").val();
+			const newpw = $("#staticNewPw").val();
+			const newpwcheck = $("#staticNewPwCheck").val();
+			if(pw == newpw){
+				alert(pwandnewpwsamemsg);
+				return;
+			}
+			if(newpw != newpwcheck){
+				alert(newpwandnewpwchecknotsamemsg);
+				return;
+			}
+			let sendData = {
+					useremail:useremail,
+					pw:pw,
+					newpw:newpw
+			}
+			//useremail은 after_login_layout.html에 있음
+			$.ajax({
+				url:"/my/changepw",
+				type:"post",
+				contentType:"application/json",
+				data:JSON.stringify(sendData),
+				success:function(data){
+					alert(successchangepwmsg);
+					window.location.reload();
+				},
+				error:function(data){
+					switch(data.responseText){
+					case "pwnotnull":
+						alert(pwnotnullmsg);
+						break;
+					case "pwregexp":
+						alert(pwregexpmsg);
+						break;
+					case "notmatch":
+						alert(emailandpwnotmatchmsg);
+						break;
+					default:
+						alert(data.responseText);
+					}
+				}
+			});
+		});
+	</script>
+</th:block>
+</body>
+</html>

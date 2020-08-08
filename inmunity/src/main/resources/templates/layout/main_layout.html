@@ -87,6 +87,14 @@
 				-1
 		);
 	});
+	$(".my-btn").click(function(e){
+		e.preventDefault();
+		moveUsingForm(
+				"pageForm",
+				"/my/default",
+				-1
+		);
+	});
 	</script>
 	<th:block layout:fragment="script"></th:block>
 </body>

@@ -29,18 +29,18 @@
     			<div class="col my-sidebar">
     				<div class="card">
   						<div class="card-body">
-    						<h5 class="card-title">내 정보</h5>
+    						<h5 class="card-title">[[#{my.info}]]</h5>
   						</div>
 					</div>
 					<div class="card btn-card">
 						<div class="card-body btn-card-body">
 							<div class="btn-group-vertical">
-		 						<button class="btn default">기본 정보</button>
-		 						<button class="btn check-email">이메일 인증</button>
-		 						<button class="btn change-info">개인정보 변경</button>
-		 						<button class="btn">비밀번호 변경</button>
-		 						<button class="btn">프로필 이미지 변경</button>
-		 						<button class="btn">회원 탈퇴</button>
+		 						<button class="btn default">[[#{my.default}]]</button>
+		 						<button class="btn check-email">[[#{my.checkemail}]]</button>
+		 						<button class="btn change-info">[[#{my.changeinfo}]]</button>
+		 						<button class="btn change-pw">[[#{my.changepw}]]</button>
+		 						<button class="btn">[[#{my.changeprofileimage}]]</button>
+		 						<button class="btn">[[#{my.withdrawal}]]</button>
 							</div>
 						</div>
 					</div>
@@ -91,6 +91,8 @@
 		}
 	});
 	const emailsendmsg = "[(#{member.emailsend})]";
+	const alreadyemailmsg = "[(#{my.alreadyemail})]";
+	const cannotchangepwmsg="[(#{my.cannotchangepw})]";
 	const userid = [[${#authentication.principal.member.userid} == null?null:${#authentication.principal.member.userid}]];
 	const useremail = [[${#authentication.principal.member.useremail}]];
 	
@@ -107,7 +109,7 @@
 	$(".check-email").click(function(e){
 		e.preventDefault();
 		if(userid == null){
-			alert("이미 이메일 인증을 하셨습니다.");
+			alert(alreadyemailmsg);
 			return;
 		}
 		let sendData = {
@@ -124,7 +126,7 @@
 			},
 			error:function(data){
 				if(data.responseText == "alreadycheck"){
-					alert("이미 이메일 인증을 하셨습니다.");
+					alert(alreadyemailmsg);
 				}else{
 					alert("error occur!");
 					console.log(data);
@@ -137,6 +139,18 @@
 		moveUsingForm(
 				"pageForm",
 				"/my/changeinfo",
+				-1
+		);
+	});
+	$(".change-pw").click(function(e){
+		if(userid == null){
+			alert(cannotchangepwmsg);
+			return;
+		}
+		e.preventDefault();
+		moveUsingForm(
+				"pageForm",
+				"/my/changepw",
 				-1
 		);
 	});

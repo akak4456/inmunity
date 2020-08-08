@@ -5,16 +5,21 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.akak4456.domain.fileupload.FileUpload;
@@ -28,10 +33,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@MappedSuperclass
+@Entity
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name="DTYPE")
+@SequenceGenerator(name="board_seq", initialValue=1, allocationSize=1)
 public abstract class Board <F extends FileUpload,R extends Reply> {
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "bno_sequence")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="board_seq")
 	private Long bno;
 	
 	private String title;
@@ -46,6 +54,7 @@ public abstract class Board <F extends FileUpload,R extends Reply> {
 	@UpdateTimestamp
 	private LocalDateTime updatedate;
 	
+	@Type(type = "FileUpload")
 	@OneToMany(cascade=CascadeType.ALL,orphanRemoval=true,fetch = FetchType.LAZY)
 	@JoinColumn(name="bno")
 	@JsonIgnore
@@ -61,6 +70,7 @@ public abstract class Board <F extends FileUpload,R extends Reply> {
 		this.fileUpload = fileUpload;
 	}
 	
+	@Type(type = "Reply")
 	@JsonIgnore
 	@OneToMany(mappedBy="board",cascade=CascadeType.ALL,fetch = FetchType.LAZY)
 	private List<R> replies;

@@ -1,19 +1,15 @@
 package com.akak4456.service.member;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.akak4456.domain.member.EmailCheck;
@@ -24,7 +20,8 @@ import com.akak4456.vo.MemberVO;
 
 @Service
 public class MemberService implements UserDetailsService {
-
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private MemberRepository memberRepository;
 	
@@ -46,7 +43,6 @@ public class MemberService implements UserDetailsService {
 	}
 	@Transactional
 	public void joinPost(MemberVO memberVO) {
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		MemberEntity member = MemberEntity.builder()
 								.userid(memberVO.getUserid())
 								.userpw(passwordEncoder.encode(memberVO.getUserpw()))
@@ -77,5 +73,21 @@ public class MemberService implements UserDetailsService {
 		return memberRepository.findByUseremail(useremail)
 				.filter(m -> m.getEmailCheck() == EmailCheck.Y).isPresent();
 	}
-
+	@Transactional
+	public boolean isMatchUseremailAndPassword(String useremail,String password) {
+		return memberRepository.findByUseremail(useremail)
+				.filter(m -> m.getUserpw()== null||passwordEncoder.matches(password, m.getUserpw())).isPresent();
+	}
+	@Transactional
+	public void changeInfo(String useremail,String username) {
+		MemberEntity member = memberRepository.findByUseremail(useremail).get();
+		member.setName(username);
+		memberRepository.save(member);
+	}
+	@Transactional
+	public void changePw(String useremail, String newpw) {
+		MemberEntity member = memberRepository.findByUseremail(useremail).get();
+		member.setUserpw(passwordEncoder.encode(newpw));
+		memberRepository.save(member);
+	}
 }

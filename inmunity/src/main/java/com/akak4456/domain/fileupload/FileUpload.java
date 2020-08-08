@@ -1,12 +1,18 @@
 package com.akak4456.domain.fileupload;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -18,10 +24,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@MappedSuperclass
+@Entity
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name="DTYPE")
+@SequenceGenerator(name="fileupload_seq", initialValue=1, allocationSize=1)
 public abstract class FileUpload {
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "fno_sequence")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="fileupload_seq")
 	private Long fno;
 	
 	private String uploadPath;

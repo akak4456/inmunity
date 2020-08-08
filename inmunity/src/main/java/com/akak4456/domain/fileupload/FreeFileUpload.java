@@ -1,5 +1,6 @@
 package com.akak4456.domain.fileupload;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -11,12 +12,8 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
-//@ToString(exclude= "replies")
 @Entity
-@Table(name="tbl_free_fileupload")
-@EqualsAndHashCode(of="fno")
-@SequenceGenerator(name = "fno_sequence",allocationSize = 1, sequenceName = "FREEFILEUPLOAD_SEQ")
+@DiscriminatorValue(value = "")
 public class FreeFileUpload extends FileUpload {
 
 }

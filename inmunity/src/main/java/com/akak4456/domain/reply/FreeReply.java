@@ -1,5 +1,6 @@
 package com.akak4456.domain.reply;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -15,11 +16,8 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString(exclude="board")
 @Entity
-@Table(name="tbl_free_reply")
-@EqualsAndHashCode(of="rno")
-@SequenceGenerator(name = "rno_sequence",allocationSize = 1, sequenceName = "FREEREPLY_SEQ")
+@DiscriminatorValue(value = "")
 @DynamicUpdate
 public class FreeReply extends Reply<FreeBoard> {
 	/*

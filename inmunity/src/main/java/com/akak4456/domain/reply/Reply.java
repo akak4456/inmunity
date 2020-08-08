@@ -3,15 +3,20 @@ package com.akak4456.domain.reply;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.akak4456.domain.board.Board;
@@ -20,12 +25,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.java.Log;
 
 @Getter
 @Setter
-@MappedSuperclass
-@Log
+@Entity
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name="DTYPE")
+@SequenceGenerator(name="reply_seq", initialValue=1, allocationSize=1)
 public abstract class Reply<B extends Board> {
 	@Transient
 	private final char[] CHAR_SET = {
@@ -35,7 +41,7 @@ public abstract class Reply<B extends Board> {
 	};
 	//CHAR_SET의 길이는 62
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "rno_sequence")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="reply_seq")
 	private Long rno;
 	
 	private Long parent_rno;
@@ -95,7 +101,6 @@ public abstract class Reply<B extends Board> {
 		result.append(result1);
 		result.append(result2);
 		//최종적으로 path에는 (parent_rno변형결과가 들어가게 됨)(rno변형결과)
-		log.info(result.toString());
 		this.setPath(result.toString());
 	}
 	
@@ -133,6 +138,8 @@ public abstract class Reply<B extends Board> {
 		//최종적으로 path에는 (parent_rno변형결과가 들어가게 됨)(rno변형결과)
 		return result.toString();
 	}
+	
+	@Type(type="Board")
 	@JsonIgnore
 	@ManyToOne
 	private B board;
