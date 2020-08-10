@@ -39,8 +39,8 @@
 		 						<button class="btn check-email">[[#{my.checkemail}]]</button>
 		 						<button class="btn change-info">[[#{my.changeinfo}]]</button>
 		 						<button class="btn change-pw">[[#{my.changepw}]]</button>
-		 						<button class="btn">[[#{my.changeprofileimage}]]</button>
-		 						<button class="btn">[[#{my.withdrawal}]]</button>
+		 						<button class="btn change-profile">[[#{my.changeprofileimage}]]</button>
+		 						<button class="btn withdrawal">[[#{my.withdrawal}]]</button>
 							</div>
 						</div>
 					</div>
@@ -151,6 +151,22 @@
 		moveUsingForm(
 				"pageForm",
 				"/my/changepw",
+				-1
+		);
+	});
+	$(".change-profile").click(function(e){
+		e.preventDefault();
+		moveUsingForm(
+				"pageForm",
+				"/my/changeprofile",
+				-1
+		);
+	});
+	$(".withdrawal").click(function(e){
+		e.preventDefault();
+		moveUsingForm(
+				"pageForm",
+				"/my/withdrawal",
 				-1
 		);
 	});

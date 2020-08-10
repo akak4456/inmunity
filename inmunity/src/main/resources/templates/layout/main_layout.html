@@ -51,6 +51,8 @@
 	<script th:inline="javascript" th:src="@{'/js/moveUsingForm.js'}"></script>
 	<script th:inline="javascript">
 	const csrf = JSON.parse('[[${_csrf}]]');
+	const useremail = [[${#authentication.principal} eq 'anonymousUser'?null:${#authentication.principal.member.useremail}]];
+	const username = [[${#authentication.principal} eq 'anonymousUser'?null:${#authentication.principal.member.name}]];
 	$.ajaxSetup({
 		beforeSend : function(xhr) {
 			xhr.setRequestHeader(csrf.headerName,csrf.token);
@@ -92,6 +94,14 @@
 		moveUsingForm(
 				"pageForm",
 				"/my/default",
+				-1
+		);
+	});
+	$(".whatiwrote-btn").click(function(e){
+		e.preventDefault();
+		moveUsingForm(
+				"pageForm",
+				"/mylog/showmyboard",
 				-1
 		);
 	});

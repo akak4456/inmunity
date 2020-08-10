@@ -2,9 +2,12 @@ package com.akak4456.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +49,21 @@ public class FileUploadController {
 			byte[] bytes = fileService.getFile(year,month,date,name);
 			return new ResponseEntity<byte[]>(bytes,HttpStatus.OK);
 		}catch(IOException e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/profileupload")
+	public ResponseEntity<String> changeProfilePost(@RequestParam("uploadfile") MultipartFile uploadfile){
+		log.info(uploadfile.toString());
+		//session.invalidate();
+		try {
+			String createdFilePath = fileService.uploadProfile(uploadfile);
+			return new ResponseEntity<>("/fileget/"+createdFilePath,HttpStatus.OK);
+		}catch(IOException e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}catch(IllegalStateException e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

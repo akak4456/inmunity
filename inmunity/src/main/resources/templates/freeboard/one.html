@@ -54,8 +54,6 @@
 <script th:inline="javascript" src="https://cdn.ckeditor.com/ckeditor5/19.1.1/classic/ckeditor.js"></script>
 <script th:inline="javascript" th:src="@{'/js/freeboard/reply.js'}"></script>
 <script th:inline="javascript">
-const useremail = [[${#authentication.principal} eq 'anonymousUser'?null:${#authentication.principal.member.useremail}]];
-const username = [[${#authentication.principal} eq 'anonymousUser'?null:${#authentication.principal.member.name}]];
 ClassicEditor
 .create( document.querySelector( '#editor' ) ,{
 })

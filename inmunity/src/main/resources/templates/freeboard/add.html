@@ -59,8 +59,8 @@ $(".add-btn").click(function(){
 	let sendData = {
 			title:title,
 			content:content,
-			useremail:[[${#authentication.principal.member.useremail}]],
-			username:[[${#authentication.principal.member.name}]],
+			useremail:useremail,
+			username:username,
 			fileUpload:boardModule.getFileForm(editoro)
 	};
 	boardModule.addBoard(sendData,function(data){

@@ -22,12 +22,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.akak4456.domain.member.EmailCheck;
 import com.akak4456.service.email.EmailServiceImpl;
+import com.akak4456.service.fileupload.MemberFileUploadService;
 import com.akak4456.service.member.MemberService;
 import com.akak4456.vo.ChangeInfoVO;
+import com.akak4456.vo.ChangeProfileVO;
 import com.akak4456.vo.ChangePwVO;
 import com.akak4456.vo.CheckEmailVO;
 import com.akak4456.vo.MemberVO;
 import com.akak4456.vo.PageVO;
+import com.akak4456.vo.WithdrawalVO;
 
 import lombok.extern.java.Log;
 
@@ -39,6 +42,9 @@ public class MemberController {
 	
 	@Autowired
 	private EmailServiceImpl emailService;
+	
+	@Autowired
+	private MemberFileUploadService memberFileUploadService;
 	
 	@Value("${rootaddress}")
 	private String rootAddress;
@@ -80,6 +86,18 @@ public class MemberController {
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/my/changepw")
 	public void changepw(Model model, PageVO pageVO) {
+		model.addAttribute("pageVO",pageVO);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/my/changeprofile")
+	public void changeprofile(Model model, PageVO pageVO) {
+		model.addAttribute("pageVO",pageVO);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/my/withdrawal")
+	public void withdrawal(Model model, PageVO pageVO) {
 		model.addAttribute("pageVO",pageVO);
 	}
 	
@@ -141,6 +159,15 @@ public class MemberController {
 	}
 	
 	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/my/changeprofile")
+	public ResponseEntity<String> changeprofilePost(@RequestBody ChangeProfileVO changeProfileVO,HttpSession session){
+		memberFileUploadService.putUserProfileInfoToDB(changeProfileVO.getUploadPath(), changeProfileVO.getUploadFileName(), changeProfileVO.getUseremail());
+		memberService.changeProfile(changeProfileVO.getImgSrc(), changeProfileVO.getUseremail());
+		session.invalidate();
+		return new ResponseEntity<>("success",HttpStatus.OK);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/my/changepw")
 	public ResponseEntity<String> changePwPost(@Valid @RequestBody ChangePwVO changePwVO,BindingResult bindingResult,HttpSession session){
 		if(bindingResult.hasErrors()) {
@@ -159,6 +186,17 @@ public class MemberController {
 		session.invalidate();
 		return new ResponseEntity<>("success",HttpStatus.OK);
 	}
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/my/withdrawal")
+	public ResponseEntity<String> withdrawalPost(@RequestBody WithdrawalVO withdrawalVO,HttpSession session){
+		if(!memberService.isMatchUseremailAndPassword(withdrawalVO.getUseremail(), withdrawalVO.getPw())) {
+			return new ResponseEntity<>("notmatch",HttpStatus.BAD_REQUEST);
+		}
+		memberService.withdrawal(withdrawalVO.getUseremail());
+		session.invalidate();
+		return new ResponseEntity<>("success",HttpStatus.OK);
+	}
+	
 	private void generateCodeAndSendEmail(String userid,String useremail) {
 		String generatedCode = RandomStringUtils.randomAlphanumeric(30);
 		memberService.updateAuthKey(generatedCode, userid);

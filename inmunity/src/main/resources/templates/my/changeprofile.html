@@ -1,0 +1,89 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{layout/after_login_layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+	<div layout:fragment="content">
+	    <div class="card">
+	    	<div class="card-header">
+	    		<h3>[[#{my.changeprofileimage}]]</h3>
+	    	</div>
+	    	<div class="card-body">
+	    		<form id="changeprofile">
+  					<div class="form-group row">
+    					<label for="profile" class="col-sm-2 col-form-label">[[#{my.picture}]]</label>
+    					<img id="profile" class="col-sm-10" th:src="${#authentication.principal.member.picture}" alt="Image not found" onerror="this.onerror=null;this.src='/img/default-person.png';" />
+    								
+  					</div>
+  					<div class="form-group row">
+    					<label for="staticFile" class="col-sm-2 col-form-label">[[#{my.file}]]</label>
+    					<div class="col-sm-10">
+      						<input type="file" readonly class="form-control-plaintext" id="staticFile" name="uploadfile">
+    					</div>
+  					</div>
+  					<button class="btn btn-primary changeprofile-btn">[[#{my.changeprofileimage}]]</button>
+				</form>
+	    	</div>
+	    </div>			
+	</div>
+<th:block layout:fragment="script">
+	<script th:inline="javascript">
+		const successchangeprofiemsg = "[(#{my.successchangeprofie})]";
+		$("#staticFile").on("change",function(e) {
+			
+			const formObj = $("#changeprofile");
+			$.ajax({
+				url : "/profileupload",
+				type : "POST",
+				data : new FormData(formObj[0]),
+				enctype : 'multipart/form-data',
+				processData : false,
+				contentType : false,
+				cache : false,
+				success : function(data) {
+						console.log(data);
+						//window.location.reload();
+						$("#profile").attr("src",data);
+				},
+				error : function(error) {
+					alert("err occur");
+					console.log(error);
+				}
+			});
+		});
+		$(".changeprofile-btn").click(function(e){
+			e.preventDefault();
+			let imageSrc = $("#profile").attr('src');
+			//console.log(imageSrc);
+			let firstIdx = imageSrc.indexOf('/',1);
+			let lastIdx = imageSrc.lastIndexOf('/');
+			//console.log(firstIdx+" "+lastIdx);
+			let uploadPath = imageSrc.substring(firstIdx+1,lastIdx);
+			let uploadFileName = imageSrc.substring(lastIdx+1);
+			let sendData = {
+					uploadPath:uploadPath,
+					uploadFileName:uploadFileName,
+					useremail:useremail,
+					imgSrc:imageSrc
+			};
+			$.ajax({
+				url:"/my/changeprofile",
+				type:"post",
+				contentType:"application/json",
+				data:JSON.stringify(sendData),
+				success:function(data){
+					alert(successchangeprofiemsg);
+					window.location.reload();
+				},
+				error:function(data){
+				}
+			});
+		});
+	</script>
+</th:block>
+</body>
+</html>

@@ -8,6 +8,8 @@ public class PageVO {
 	private int page;
 	private int size;
 	private String dest;
+	private String type;
+	private String keyword;
 	public PageVO() {
 		this.page = 1;
 		this.size = PageConstant.DEFAULT_PAGE_SIZE;
@@ -39,5 +41,17 @@ public class PageVO {
 	}
 	public void setDest(String dest) {
 		this.dest = dest;
+	}
+	public String getType() {
+		return this.type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getKeyword() {
+		return this.keyword;
+	}
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 }

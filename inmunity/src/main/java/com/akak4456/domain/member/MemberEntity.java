@@ -25,8 +25,7 @@ import lombok.ToString;
 public class MemberEntity {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id;
+	private String useremail;
 	
 	@Enumerated(EnumType.STRING)
 	@NotNull
@@ -36,9 +35,6 @@ public class MemberEntity {
 	private String userid;//기본 회원 인증용
 	private String userpw;//기본 회원 인증용
 	
-	@NotNull
-	@Column(unique=true)
-	private String useremail;
 	
 	@Enumerated(EnumType.ORDINAL)
 	@NotNull

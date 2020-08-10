@@ -1,0 +1,37 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{layout/main_layout}">
+<head>
+<meta charset="UTF-8">
+<style>
+.ck-content {
+	min-height: 400px;
+}
+.btn{
+	margin-top:10px;
+	margin-left:10px;
+}
+</style>
+</head>
+<div layout:fragment="content">
+	<section>
+		<div>
+			<h1 class="float-left">[[#{belowmy.whatiwrote}]]</h1>
+		</div>
+		[[${result}]]
+	</section>
+</div>
+<th:block layout:fragment="script">
+<script th:inline="javascript">
+let passParam = {
+		page:1,
+		size:10,
+		keyword:useremail
+}
+$.getJSON("/mylog/myboards",passParam,function(data){
+	console.log(data);
+});
+</script>
+</th:block>
+</html>

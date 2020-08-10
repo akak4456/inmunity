@@ -32,7 +32,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		OAuthAttributes attributes = OAuthAttributes
 										.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
 		
-		MemberEntity entity = memberRepository.findByUseremail(attributes.getEmail())
+		MemberEntity entity = memberRepository.findById(attributes.getEmail())
 												.orElseGet(()->memberRepository.save(attributes.toEntity()));
 		
 		

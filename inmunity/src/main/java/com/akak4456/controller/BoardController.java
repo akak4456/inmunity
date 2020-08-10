@@ -31,14 +31,11 @@ public abstract class BoardController <T extends Board,R extends RecommendOrOppo
 	protected abstract String getRootAddress();
 	
 	protected abstract R makeOneRecommendOrOppositeEntity(Long bno, String email,boolean isRecommend);
+	
 	@GetMapping("/boards")
 	public String getList(Model model,PageVO pageVO){
-		Pageable pageable = null;
-		if(true) {
-			//정렬 순서에 따라 pageable 다르게 만들기
-			pageable = pageVO.makePageble(0, "bno");
-		}
-		PageMaker<T> pageMaker = new PageMaker<T>(boardService.getListWithPaging(null, null, pageable));
+		Pageable pageable = pageVO.makePageble(0, "bno");
+		PageMaker<T> pageMaker = new PageMaker<T>(boardService.getListWithPaging(pageVO.getType(), pageVO.getKeyword(), pageable));
 		model.addAttribute("pageVO",pageVO);
 		model.addAttribute("result",pageMaker);
 		return getRootAddress()+"/list";

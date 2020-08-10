@@ -47,6 +47,20 @@
 			<li class="page-item" th:if="${result.nextPage}"><a
 				class="page-link" th:href="${result.nextPage.pageNumber}+1">NEXT</a></li>
 		</ul>
+		<form class="form-inline">
+  			<div class="form-group mb-2">
+  				<select class="form-control" id="searchType">
+  					<option value="T">[[#{board.title}]]</option>
+  					<option value="C">[[#{board.content}]]</option>
+  					<option value="W">[[#{board.writer}]]</option>
+  					<option value="E">[[#{member.email}]]</option>
+  				</select>
+  			</div>
+  			<div class="form-group mx-sm-3 mb-2">
+    			<input type="text" class="form-control" id="searchKeyword" th:placeholder="#{search.enter}">
+  			</div>
+  			<button type="submit" class="btn btn-primary mb-2 search-btn">[[#{search}]]</button>
+		</form>
 	</section>
 </div>
 <th:block layout:fragment="script">
@@ -75,6 +89,19 @@ $(".new-article").click(function(e){
 			"pageForm",
 			"/freeboard/add",
 			-1
+	);
+});
+$(".search-btn").click(function(e){
+	e.preventDefault();
+	const type =  $("#searchType").find(":selected").val();
+	const keyword = $("#searchKeyword").val();
+	moveUsingForm(
+			"pageForm",
+			"/freeboard/boards",
+			-1,
+			type,
+			keyword
+			
 	);
 });
 </script>

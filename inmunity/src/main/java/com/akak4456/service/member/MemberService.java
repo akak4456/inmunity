@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.akak4456.domain.member.EmailCheck;
 import com.akak4456.domain.member.MemberEntity;
 import com.akak4456.domain.member.Role;
+import com.akak4456.persistent.fileupload.MemberFileUploadRepository;
 import com.akak4456.persistent.member.MemberRepository;
 import com.akak4456.vo.MemberVO;
 
@@ -24,6 +24,8 @@ public class MemberService implements UserDetailsService {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private MemberRepository memberRepository;
+	@Autowired
+	private MemberFileUploadRepository memberFileUploadRepository;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -39,7 +41,7 @@ public class MemberService implements UserDetailsService {
 		return memberRepository.findByUserid(userid).isPresent();
 	}
 	public boolean isSameEmail(String email) {
-		return memberRepository.findByUseremail(email).isPresent();
+		return memberRepository.findById(email).isPresent();
 	}
 	@Transactional
 	public void joinPost(MemberVO memberVO) {
@@ -70,24 +72,33 @@ public class MemberService implements UserDetailsService {
 	}
 	@Transactional
 	public boolean isEmailAuthenticated(String useremail) {
-		return memberRepository.findByUseremail(useremail)
+		return memberRepository.findById(useremail)
 				.filter(m -> m.getEmailCheck() == EmailCheck.Y).isPresent();
 	}
 	@Transactional
 	public boolean isMatchUseremailAndPassword(String useremail,String password) {
-		return memberRepository.findByUseremail(useremail)
+		return memberRepository.findById(useremail)
 				.filter(m -> m.getUserpw()== null||passwordEncoder.matches(password, m.getUserpw())).isPresent();
 	}
 	@Transactional
 	public void changeInfo(String useremail,String username) {
-		MemberEntity member = memberRepository.findByUseremail(useremail).get();
+		MemberEntity member = memberRepository.findById(useremail).get();
 		member.setName(username);
 		memberRepository.save(member);
 	}
 	@Transactional
 	public void changePw(String useremail, String newpw) {
-		MemberEntity member = memberRepository.findByUseremail(useremail).get();
+		MemberEntity member = memberRepository.findById(useremail).get();
 		member.setUserpw(passwordEncoder.encode(newpw));
 		memberRepository.save(member);
+	}
+	@Transactional
+	public void changeProfile(String pictureSrc,String useremail) {
+		memberRepository.setPictureByUseremail(pictureSrc, useremail);
+	}
+	@Transactional
+	public void withdrawal(String useremail) {
+		memberFileUploadRepository.deleteByUseremail(useremail);
+		memberRepository.deleteById(useremail);
 	}
 }

@@ -8,4 +8,6 @@ public interface FileService {
 	public String saveFile(MultipartFile uploadFile) throws IllegalStateException, IOException;
 	//return created file path
 	public byte[] getFile(String year,String month, String date, String name) throws IOException;
+	
+	public String uploadProfile(MultipartFile uploadFile) throws IllegalStateException,IOException;
 }

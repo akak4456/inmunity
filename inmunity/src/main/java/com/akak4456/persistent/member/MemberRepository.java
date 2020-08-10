@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.akak4456.domain.member.EmailCheck;
 import com.akak4456.domain.member.MemberEntity;
 @Repository
-public interface MemberRepository extends CrudRepository<MemberEntity,Long> {
+public interface MemberRepository extends CrudRepository<MemberEntity,String> {
 	@Modifying
 	@Query("update MemberEntity m set m.authKey = ?1 where m.userid=?2")
 	void setAuthKeyById(String authKey,String id);
@@ -19,7 +19,10 @@ public interface MemberRepository extends CrudRepository<MemberEntity,Long> {
 	@Query("update MemberEntity m set m.emailCheck = ?1 where m.userid=?2")
 	void setEmailCheckById(EmailCheck check,String id);
 	
-	Optional<MemberEntity> findByUseremail(String email);
-	
 	Optional<MemberEntity> findByUserid(String id);
+	
+	@Modifying
+	@Query("update MemberEntity m set m.picture = ?1 where m.useremail=?2")
+	void setPictureByUseremail(String picture,String useremail);
+	
 }

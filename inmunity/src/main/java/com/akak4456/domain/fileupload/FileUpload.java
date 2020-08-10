@@ -25,7 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="DTYPE")
 @SequenceGenerator(name="fileupload_seq", initialValue=1, allocationSize=1)
 public abstract class FileUpload {
