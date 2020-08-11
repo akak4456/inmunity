@@ -4,6 +4,22 @@
 <meta charset="utf-8">
 </head>
 <header th:fragment="header">
-<h1>header</h1>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-4">
+			<h1>[[#{inmunity}]]</h1>
+		</div>
+		<div class="col-md-4">
+			<ul class="list-group list-group-horizontal">
+				<li class="list-group-item active">[[#{board}]]</li>
+				<li class="list-group-item">[[#{notice}]]</li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<button class="btn btn-primary locale-ko-btn">한글</button>
+			<button class="btn btn-primary locale-en-btn">English</button>
+		</div>
+	</div>
+</div>
 </header>
 </html>

@@ -1,19 +1,20 @@
 package com.akak4456.service.mylog;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.akak4456.domain.board.Board;
-import com.akak4456.persistent.mylog.BoardMyLogRepository;
+import com.akak4456.persistent.boardandreplygeneral.BoardGeneralRepository;
 
 @Service
 public class BoardMyLogService {
 	@Autowired
-	private BoardMyLogRepository repo;
+	private BoardGeneralRepository repo;
 	
-	public List<Board> getListWithUseremail(String useremail){
-		return repo.findAllByUseremail(useremail);
+	public Page<Board> getListWithUseremail(String useremail,Pageable pageable){
+		return repo.findAll(repo.makePredicate("E", useremail),pageable);
+		//return repo.findAllByUseremail(pageNumber,pageSize,useremail);
 	}
 }

@@ -105,6 +105,30 @@
 				-1
 		);
 	});
+	$(".replyarticle-btn").click(function(e){
+		e.preventDefault();
+		moveUsingForm(
+				"pageForm",
+				"/mylog/showmyreply",
+				-1
+		);
+	});
+	$(".showscrap-btn").click(function(e){
+		e.preventDefault();
+		moveUsingForm(
+				"pageForm",
+				"/mylog/showmyscrap",
+				-1
+		);
+	});
+	$(".locale-ko-btn").click(function(e){
+		e.preventDefault();
+		window.location.href = window.location.href.split('?')[0]+"?locale=ko";
+	});
+	$(".locale-en-btn").click(function(e){
+		e.preventDefault();
+		window.location.href = window.location.href.split('?')[0]+"?locale=en";
+	});
 	</script>
 	<th:block layout:fragment="script"></th:block>
 </body>

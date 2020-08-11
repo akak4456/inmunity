@@ -17,14 +17,13 @@
 <div layout:fragment="content">
 	<section>
 		<div>
-			<h1 class="float-left">[[#{belowmy.whatiwrote}]]</h1>
+			<h1 class="float-left">[[#{belowmy.myscrap}]]</h1>
 		</div>
 		<table class="table">
 			<thead class="thead-dark">
 				<tr>
 					<th scope="col">#</th>
 					<th scope="col">[[#{board.title}]]</th>
-					<th scope="col">[[#{board.regdate}]]</th>
 				</tr>
 			</thead>
 			<tbody class="boardlist">
@@ -42,13 +41,12 @@ let passParam = {
 		keyword:useremail
 }
 let listGet = function(){
-	$.getJSON("/mylog/myboards",passParam,function(data){
+	$.getJSON("/scrap/list",passParam,function(data){
 		let inserted = "";
 		data.result.content.forEach(function(row){
 			inserted += "<tr>";
 			inserted += "	<th scope='row'>"+row.bno+"</th>";
 			inserted += "	<td><a href='"+row.bno+"'>"+row.title+"</a></td>";
-			inserted += "	<td>"+row.updatedate+"</td>";
 			inserted += "</tr>";
 		});
 		$(".boardlist").html("");

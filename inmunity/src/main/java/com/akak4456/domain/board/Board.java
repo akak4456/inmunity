@@ -23,11 +23,13 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.akak4456.domain.fileupload.FileUpload;
+import com.akak4456.domain.member.MemberEntity;
 import com.akak4456.domain.reply.Reply;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,6 +39,7 @@ import lombok.Setter;
 @Inheritance(strategy=InheritanceType.JOINED)
 @DiscriminatorColumn(name="DTYPE")
 @SequenceGenerator(name="board_seq", initialValue=1, allocationSize=1)
+@EqualsAndHashCode(of="bno")
 public abstract class Board <F extends FileUpload,R extends Reply> {
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="board_seq")

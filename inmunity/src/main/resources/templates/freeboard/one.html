@@ -27,6 +27,7 @@
 					[[${result.recommendcnt}]]
 					<img class="opposite-btn" th:src="@{/img/opposite.png}">
 					[[${result.oppositecnt}]]
+					<img class="scrap-btn" style="width:50px;height:50px;" th:src="@{/img/star.png}">
 				</div>
 			</div>
 			<div class="my-btn-grp clearfix" role="group">
@@ -128,6 +129,36 @@ $(".opposite-btn").click(function(e){
 			}
 		}
 	});
+});
+const scrapconfirmmsg = "[(#{scrap.confirm})]";
+const scrapsuccessmsg = "[(#{scrap.success})]";
+const scrapfailmsg = "[(#{scrap.fail})]";
+$(".scrap-btn").click(function(e){
+	e.preventDefault();
+	let sendData = {
+			bno:bno,
+			useremail:useremail
+	};
+	if(confirm(scrapconfirmmsg)){
+		$.ajax({
+			url:"/scrap/add",
+			type:"post",
+			contentType:"application/json",
+			data:JSON.stringify(sendData),
+			success:function(data){
+				alert(scrapsuccessmsg);
+				window.location.reload();
+			},
+			error:function(data){
+				if(data.responseText == "already"){
+					alert(scrapfailmsg);
+				}else{
+					console.log(data);
+				}
+			}
+		});
+	}
+	
 });
 //board관련
 const replyaddsuccess = "[(#{reply.add.success})]";
