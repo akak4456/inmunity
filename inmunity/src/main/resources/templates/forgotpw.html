@@ -1,0 +1,64 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{layout/member_layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+	<div class="wrapper" layout:fragment="content">
+		<div id="formContent">
+	    <!-- Tabs Titles -->
+	    
+	    	<div>
+	    		<h1>[[#{findpw}]]</h1>
+	    	</div>
+	
+	    <!-- Login Form -->
+			<form>
+				<input type="email" id="useremail" name="useremail" th:placeholder="#{member.email}">
+				<input type="submit" class='findpw-btn' th:value="#{findpw}">
+		    </form>
+			<div id="formFooter">
+			</div>
+	
+		</div>
+	</div>
+	<th:block layout:fragment="script">
+	<script th:inline="javascript">
+	const successmsg = "[(#{findpw.success})]";
+	const notmatchmsg = "[(#{findpw.notmatch})]";
+	$.ajaxSetup({
+		beforeSend : function(xhr) {
+			xhr.setRequestHeader(csrf.headerName,csrf.token);
+		}
+	});
+	const csrf = JSON.parse('[[${_csrf}]]');
+	$(".findpw-btn").click(function(e){
+		e.preventDefault();
+		let sendData = {
+				useremail:$("#useremail").val()
+		};
+		$.ajax({
+			url:"/forgotpw",
+			type:"post",
+			contentType:"application/json",
+			data:JSON.stringify(sendData),
+			success:function(data){
+				alert(successmsg);
+				window.location.href="/login";
+			},
+			error:function(data){
+				if(data.responseText == "notmatch"){
+					alert(notmatchmsg);
+				}else{
+					alert("error occur!");
+					console.log(data);
+				}
+			}
+		});
+	});
+	</script>
+	</th:block>
+</html>

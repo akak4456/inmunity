@@ -28,6 +28,7 @@ import com.akak4456.vo.ChangeInfoVO;
 import com.akak4456.vo.ChangeProfileVO;
 import com.akak4456.vo.ChangePwVO;
 import com.akak4456.vo.CheckEmailVO;
+import com.akak4456.vo.ForgotPWVO;
 import com.akak4456.vo.MemberVO;
 import com.akak4456.vo.PageVO;
 import com.akak4456.vo.WithdrawalVO;
@@ -61,6 +62,20 @@ public class MemberController {
 	@GetMapping("/join")
 	public void join(Model model,PageVO pageVO) {
 		model.addAttribute("pageVO",pageVO);
+	}
+	@GetMapping("/forgotpw")
+	public void forgotpw(Model model,PageVO pageVO) {
+		model.addAttribute("pageVO",pageVO);
+	}
+	@PostMapping("/forgotpw")
+	public ResponseEntity<String> forgotpwPost(@RequestBody ForgotPWVO forgotPWVO){
+		if(!memberService.isSameEmail(forgotPWVO.getUseremail())) {
+			return new ResponseEntity<>("notmatch",HttpStatus.BAD_REQUEST);
+		}
+		String newpassword = RandomStringUtils.randomAlphanumeric(5)+"!"+RandomStringUtils.randomAlphanumeric(5)+"#";
+		memberService.changePw(forgotPWVO.getUseremail(), newpassword);
+		sendEmailPW(forgotPWVO.getUseremail(),newpassword);
+		return new ResponseEntity<>("success",HttpStatus.OK);
 	}
 	@GetMapping("/emailcheck/{id}/{code}")
 	public String checkemailcode(@PathVariable("id")String id,@PathVariable("code")String code) {
@@ -214,5 +229,12 @@ public class MemberController {
 		content.append("'>여기</a>");
 		content.append("를 클릭해서 인증을 완료해주세요!");
 		emailService.sendMail( to,"이메일 인증을 완료해주세요!" , content.toString());
+	}
+	private void sendEmailPW(String to,String newpassword) {
+		StringBuffer content = new StringBuffer();
+		content.append("새로운 비밀번호는 <u>");
+		content.append(newpassword);
+		content.append("</u>입니다. 이 비밀번호로 로그인해주세요!");
+		emailService.sendMail( to,"새로운 비밀번호 입니다!" , content.toString());
 	}
 }

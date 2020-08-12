@@ -1,7 +1,10 @@
 package com.akak4456.persistent.boardandreplygeneral;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.akak4456.domain.board.Board;
@@ -10,6 +13,9 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 @Repository
 public interface BoardGeneralRepository extends CrudRepository<Board, Long>,QuerydslPredicateExecutor<Board> {
+	@Modifying
+	@Query("update Board b set b.useremail='none' where b.useremail=:useremail")
+	public void changeToDeleteByUseremail(@Param("useremail")String useremail);
 	public default Predicate makePredicate(String type,String keyword) {
 		BooleanBuilder builder = new BooleanBuilder();
 		QBoard board = QBoard.board;

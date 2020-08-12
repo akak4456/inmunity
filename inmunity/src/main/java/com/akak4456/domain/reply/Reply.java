@@ -13,6 +13,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,6 +49,9 @@ public abstract class Reply<B extends Board> {
 	
 	private String path;
 	
+	
+	@NotNull
+	@NotEmpty
 	private String reply;
 	
 	/*

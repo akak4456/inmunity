@@ -10,12 +10,15 @@ import com.akak4456.domain.board.Board;
 import com.akak4456.domain.recommendoropposite.RecommendOrOppositeEntity;
 import com.akak4456.persistent.board.BoardRepository;
 import com.akak4456.persistent.recommendoropposite.RecommendOrOppositeRepository;
+import com.akak4456.persistent.scrap.ScrapRepository;
 
 public class BoardService<T extends Board,R extends RecommendOrOppositeEntity> {
 	@Autowired
 	private BoardRepository<T> boardRepo;
 	@Autowired
 	private RecommendOrOppositeRepository<R> recommendOrOppositeRepo;
+	@Autowired
+	private ScrapRepository scrapRepository;
 
 	@Transactional
 	public void addBoard(T board) {
@@ -49,10 +52,9 @@ public class BoardService<T extends Board,R extends RecommendOrOppositeEntity> {
 	
 	@Transactional
 	public void delete(Long bno) {
-		boardRepo.deleteById(bno);
 		recommendOrOppositeRepo.deleteByBno(bno);
-		//RecommnedOrOppositeId id = new RecommendOrOppositeId(bno,useremail);
-		
+		scrapRepository.deleteByBno(bno);
+		boardRepo.deleteById(bno);	
 	}
 	
 	@Transactional

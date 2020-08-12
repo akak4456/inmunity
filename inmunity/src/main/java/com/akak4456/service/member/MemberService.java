@@ -14,8 +14,11 @@ import org.springframework.stereotype.Service;
 import com.akak4456.domain.member.EmailCheck;
 import com.akak4456.domain.member.MemberEntity;
 import com.akak4456.domain.member.Role;
+import com.akak4456.persistent.boardandreplygeneral.BoardGeneralRepository;
+import com.akak4456.persistent.boardandreplygeneral.ReplyGeneralRepository;
 import com.akak4456.persistent.fileupload.MemberFileUploadRepository;
 import com.akak4456.persistent.member.MemberRepository;
+import com.akak4456.persistent.scrap.ScrapRepository;
 import com.akak4456.vo.MemberVO;
 
 @Service
@@ -26,6 +29,12 @@ public class MemberService implements UserDetailsService {
 	private MemberRepository memberRepository;
 	@Autowired
 	private MemberFileUploadRepository memberFileUploadRepository;
+	@Autowired
+	private ScrapRepository scrapRepo;
+	@Autowired
+	private BoardGeneralRepository boardGeneralRepo;
+	@Autowired
+	private ReplyGeneralRepository replyGeneralRepo;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -98,6 +107,9 @@ public class MemberService implements UserDetailsService {
 	}
 	@Transactional
 	public void withdrawal(String useremail) {
+		boardGeneralRepo.changeToDeleteByUseremail(useremail);
+		replyGeneralRepo.changeToDeleteByUseremail(useremail);
+		scrapRepo.deleteByUseremail(useremail);
 		memberFileUploadRepository.deleteByUseremail(useremail);
 		memberRepository.deleteById(useremail);
 	}

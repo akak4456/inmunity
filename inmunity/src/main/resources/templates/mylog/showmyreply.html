@@ -45,10 +45,12 @@ let listGet = function(){
 		console.log(data);
 		let inserted = "";
 		data.result.content.forEach(function(row){
+			if(row.isdelete=="N"){
 			inserted += "<tr>";
 			inserted += "	<th scope='row'>"+row.rno+"</th>";
 			inserted += "	<td>"+row.reply+"</td>";
 			inserted += "</tr>";
+			}
 		});
 		$(".boardlist").html("");
 		$(".boardlist").append(inserted);

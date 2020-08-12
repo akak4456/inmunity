@@ -195,8 +195,10 @@ let replyModule = (function(){
 		ret += "	<div class='clearfix'>";
 		ret += "		<span class='float-left'>"+row.replyer+"</span>";
 		if(row.isdelete == "N"){
+		if(useremail==row.useremail){
 		ret += "		<span class='reply-btn float-right'><a class='reply-delete-btn'>삭제</a></span>";
 		ret += "		<span class='reply-btn float-right'><a class='reply-modify-btn'>수정</a></span>";
+		}
 		if(row.parent_rno == -1)
 		ret += "		<span class='reply-btn float-right'><a class='rereply-add-btn'>대댓글</a></span>";
 		}

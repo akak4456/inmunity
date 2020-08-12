@@ -135,6 +135,10 @@ const scrapsuccessmsg = "[(#{scrap.success})]";
 const scrapfailmsg = "[(#{scrap.fail})]";
 $(".scrap-btn").click(function(e){
 	e.preventDefault();
+	if(useremail == null){
+		alert(scrapfailmsg);
+		return;
+	}
 	let sendData = {
 			bno:bno,
 			useremail:useremail
@@ -153,6 +157,7 @@ $(".scrap-btn").click(function(e){
 				if(data.responseText == "already"){
 					alert(scrapfailmsg);
 				}else{
+					alert(scrapfailmsg);
 					console.log(data);
 				}
 			}

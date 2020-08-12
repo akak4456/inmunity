@@ -16,6 +16,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,7 +24,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.akak4456.domain.fileupload.FileUpload;
-import com.akak4456.domain.member.MemberEntity;
 import com.akak4456.domain.reply.Reply;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,7 +45,11 @@ public abstract class Board <F extends FileUpload,R extends Reply> {
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="board_seq")
 	private Long bno;
 	
+	@NotNull
+	@NotEmpty
 	private String title;
+	@NotNull
+	@NotEmpty
 	@Column(columnDefinition = "CLOB")
 	private String content;
 

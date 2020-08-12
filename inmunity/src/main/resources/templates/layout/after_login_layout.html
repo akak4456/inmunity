@@ -170,6 +170,22 @@
 				-1
 		);
 	});
+	$(".locale-ko-btn").click(function(e){
+		e.preventDefault();
+		window.location.href = window.location.href.split('?')[0]+"?locale=ko";
+	});
+	$(".locale-en-btn").click(function(e){
+		e.preventDefault();
+		window.location.href = window.location.href.split('?')[0]+"?locale=en";
+	});
+	$(".boardindex-btn").click(function(e){
+		e.preventDefault();
+		window.location.href = "/";
+	});
+	$(".freeboard-btn").click(function(e){
+		e.preventDefault();
+		window.location.href = "/freeboard/boards";
+	});
 	</script>
 	<th:block layout:fragment="script">
 		
