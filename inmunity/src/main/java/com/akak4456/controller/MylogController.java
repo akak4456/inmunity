@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.akak4456.domain.board.Board;
 import com.akak4456.domain.reply.Reply;
-import com.akak4456.service.mylog.BoardMyLogService;
-import com.akak4456.service.mylog.ReplyMyLogService;
+import com.akak4456.service.BoardService;
+import com.akak4456.service.ReplyService;
 import com.akak4456.vo.PageMaker;
 import com.akak4456.vo.PageVO;
 
@@ -25,9 +25,9 @@ import lombok.extern.java.Log;
 @RequestMapping("/mylog/**")
 public class MylogController {
 	@Autowired
-	private BoardMyLogService boardMyLogService;
+	private BoardService boardMyLogService;
 	@Autowired
-	private ReplyMyLogService replyMyLogService;
+	private ReplyService replyMyLogService;
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/showmyboard")
 	public void showmyboard(Model model, PageVO pageVO) {

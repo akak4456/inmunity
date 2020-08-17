@@ -61,7 +61,10 @@ $(".add-btn").click(function(){
 			content:content,
 			useremail:useremail,
 			username:username,
-			fileUpload:boardModule.getFileForm(editoro)
+			fileUpload:boardModule.getFileForm(editoro),
+			member:{
+				useremail:useremail
+			}
 	};
 	boardModule.addBoard(sendData,function(data){
 		alert(successmsg);

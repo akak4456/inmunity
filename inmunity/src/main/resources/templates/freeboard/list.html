@@ -25,13 +25,13 @@
 			</thead>
 			<tbody class="boardlist">
 				<tr th:each="board:${result.result.content}">
-					<th scope='row'>[[${board.bno}]]</th>
-					<td><a th:href="${board.bno}">[[${board.title}]]</a>
-					<td>[[${board.username}]]</td>
-					<td>[[${#strings.substring(board.updatedate,0,10)}]]</td>
-					<td>[[${board.viewcnt}]]</td>
-					<td>[[${board.recommendcnt}]]</td>
-					<td>[[${board.oppositecnt}]]</td>
+					<th scope='row'>[[${board[0].bno}]]</th>
+					<td><a th:href="${board[0].bno}">[[${board[0].title}]]</a>
+					<td>[[${board[1]}]]</td>
+					<td>[[${#strings.substring(board[0].updatedate,0,10)}]]</td>
+					<td>[[${board[0].viewcnt}]]</td>
+					<td>[[${board[0].recommendcnt}]]</td>
+					<td>[[${board[0].oppositecnt}]]</td>
 				</tr>
 			</tbody>
 		</table>
@@ -65,6 +65,7 @@
 </div>
 <th:block layout:fragment="script">
 <script th:inline="javascript">
+console.log([[${result.result.content}]]);
 $(".boardlist a").click(function(e){
 	e.preventDefault();
 	let no = $(this).attr('href');

@@ -1,24 +1,27 @@
 package com.akak4456.domain.board;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 
-import org.hibernate.annotations.DynamicUpdate;
-
-import com.akak4456.domain.fileupload.FreeFileUpload;
+import com.akak4456.domain.fileupload.BoardFileUpload;
+import com.akak4456.domain.member.MemberEntity;
+import com.akak4456.domain.recommendoropposite.RecommendOrOpposite;
 import com.akak4456.domain.reply.FreeReply;
+import com.akak4456.domain.reply.Reply;
+import com.akak4456.domain.scrap.Scrap;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Setter
+@SuperBuilder
+@NoArgsConstructor
 @Entity
 @DiscriminatorValue(value = "")
-public class FreeBoard extends Board<FreeFileUpload,FreeReply> {
-
+public class FreeBoard extends Board<FreeReply> {
 }

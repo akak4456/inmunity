@@ -14,11 +14,12 @@ import org.springframework.stereotype.Service;
 import com.akak4456.domain.member.EmailCheck;
 import com.akak4456.domain.member.MemberEntity;
 import com.akak4456.domain.member.Role;
-import com.akak4456.persistent.boardandreplygeneral.BoardGeneralRepository;
-import com.akak4456.persistent.boardandreplygeneral.ReplyGeneralRepository;
-import com.akak4456.persistent.fileupload.MemberFileUploadRepository;
-import com.akak4456.persistent.member.MemberRepository;
-import com.akak4456.persistent.scrap.ScrapRepository;
+import com.akak4456.persistent.BoardRepository;
+import com.akak4456.persistent.FileUploadRepository;
+import com.akak4456.persistent.MemberRepository;
+import com.akak4456.persistent.RecommendOrOppositeRepository;
+import com.akak4456.persistent.ReplyRepository;
+import com.akak4456.persistent.ScrapRepository;
 import com.akak4456.vo.MemberVO;
 
 @Service
@@ -28,13 +29,15 @@ public class MemberService implements UserDetailsService {
 	@Autowired
 	private MemberRepository memberRepository;
 	@Autowired
-	private MemberFileUploadRepository memberFileUploadRepository;
+	private FileUploadRepository memberFileUploadRepository;
 	@Autowired
 	private ScrapRepository scrapRepo;
 	@Autowired
-	private BoardGeneralRepository boardGeneralRepo;
+	private BoardRepository boardGeneralRepo;
 	@Autowired
-	private ReplyGeneralRepository replyGeneralRepo;
+	private ReplyRepository replyGeneralRepo;
+	@Autowired
+	private RecommendOrOppositeRepository roRepo;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -60,7 +63,7 @@ public class MemberService implements UserDetailsService {
 								.useremail(memberVO.getUseremail())
 								.name(memberVO.getUserid())
 								.role(Role.ROLE_MEMBER)
-								.emailcheck(EmailCheck.N)
+								.emailCheck(EmailCheck.N)
 								.build();
 		memberRepository.save(member);
 	}
@@ -110,6 +113,7 @@ public class MemberService implements UserDetailsService {
 		boardGeneralRepo.changeToDeleteByUseremail(useremail);
 		replyGeneralRepo.changeToDeleteByUseremail(useremail);
 		scrapRepo.deleteByUseremail(useremail);
+		roRepo.deleteByUseremail(useremail);
 		memberFileUploadRepository.deleteByUseremail(useremail);
 		memberRepository.deleteById(useremail);
 	}

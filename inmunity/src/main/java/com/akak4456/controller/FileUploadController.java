@@ -2,8 +2,6 @@ package com.akak4456.controller;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.akak4456.service.file.FileService;
+import com.akak4456.service.FileSystemManipulateService;
 import com.akak4456.vo.UrlVO;
 
 import lombok.extern.java.Log;
@@ -24,7 +22,7 @@ import lombok.extern.java.Log;
 @Log
 public class FileUploadController {
 	@Autowired
-	private FileService fileService;
+	private FileSystemManipulateService fileService;
 	@PostMapping("/fileupload")
 	public ResponseEntity<UrlVO> fileUpload(@RequestParam("upload")MultipartFile uploadFile){
 		try {

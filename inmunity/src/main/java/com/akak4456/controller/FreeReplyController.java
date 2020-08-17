@@ -13,8 +13,7 @@ import lombok.extern.java.Log;
 public class FreeReplyController extends ReplyController<FreeBoard, FreeReply> {@Override
 	protected FreeBoard makeOneEmptyBoardByBno(Long bno) {
 		// TODO Auto-generated method stub
-		FreeBoard board = new FreeBoard();
-		board.setBno(bno);
+		FreeBoard board = FreeBoard.builder().bno(bno).title("empty").content("empty").build();
 		return board;
 	}
 

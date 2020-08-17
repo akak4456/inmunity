@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.akak4456.domain.member.EmailCheck;
-import com.akak4456.service.email.EmailServiceImpl;
-import com.akak4456.service.fileupload.MemberFileUploadService;
+import com.akak4456.service.EmailService;
+import com.akak4456.service.FileDBService;
 import com.akak4456.service.member.MemberService;
 import com.akak4456.vo.ChangeInfoVO;
 import com.akak4456.vo.ChangeProfileVO;
@@ -42,10 +42,10 @@ public class MemberController {
 	private MemberService memberService;
 	
 	@Autowired
-	private EmailServiceImpl emailService;
+	private EmailService emailService;
 	
 	@Autowired
-	private MemberFileUploadService memberFileUploadService;
+	private FileDBService memberFileUploadService;
 	
 	@Value("${rootaddress}")
 	private String rootAddress;

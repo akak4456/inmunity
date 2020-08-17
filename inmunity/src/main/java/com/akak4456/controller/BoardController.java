@@ -15,27 +15,29 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.akak4456.domain.board.Board;
-import com.akak4456.domain.recommendoropposite.RecommendOrOppositeEntity;
-import com.akak4456.service.board.BoardService;
-import com.akak4456.service.board.RecommendOrOppositeAlreadyExist;
+import com.akak4456.domain.recommendoropposite.RecommendOrOpposite;
+import com.akak4456.domain.recommendoropposite.RecommendOrOppositeEnum;
+import com.akak4456.domain.recommendoropposite.RecommendOrOppositeId;
+import com.akak4456.exception.RecommendOrOppositeAlreadyExist;
+import com.akak4456.service.BoardService;
 import com.akak4456.vo.PageMaker;
 import com.akak4456.vo.PageVO;
 import com.akak4456.vo.RecommendOrOppositeVO;
 
 import lombok.extern.java.Log;
 @Log
-public abstract class BoardController <T extends Board,R extends RecommendOrOppositeEntity>{
+public abstract class BoardController <T extends Board>{
 	@Autowired
-	protected BoardService<T, R> boardService;
+	protected BoardService boardService;
 	
 	protected abstract String getRootAddress();
 	
-	protected abstract R makeOneRecommendOrOppositeEntity(Long bno, String email,boolean isRecommend);
+	protected abstract RecommendOrOpposite makeOneRecommendOrOppositeEntity(Long bno,String useremail,boolean isRecommend);
 	
 	@GetMapping("/boards")
 	public String getList(Model model,PageVO pageVO){
 		Pageable pageable = pageVO.makePageble(0, "bno");
-		PageMaker<T> pageMaker = new PageMaker<T>(boardService.getListWithPaging(pageVO.getType(), pageVO.getKeyword(), pageable));
+		PageMaker<Board> pageMaker = new PageMaker<Board>(boardService.getListWithPaging(pageVO.getType(), pageVO.getKeyword(), pageable));
 		model.addAttribute("pageVO",pageVO);
 		model.addAttribute("result",pageMaker);
 		return getRootAddress()+"/list";
@@ -43,7 +45,7 @@ public abstract class BoardController <T extends Board,R extends RecommendOrOppo
 	
 	@GetMapping("/boards/{bno}")
 	public String getOne(Model model,@PathVariable("bno") Long bno,PageVO pageVO){
-		T getBoard = boardService.getOne(bno);
+		Board getBoard = boardService.getOne(bno);
 		model.addAttribute("pageVO",pageVO);
 		model.addAttribute("result",getBoard);
 		return getRootAddress()+"/one";
@@ -51,7 +53,7 @@ public abstract class BoardController <T extends Board,R extends RecommendOrOppo
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/modify/{bno}")
 	public String modify(Model model,@PathVariable("bno") Long bno,PageVO pageVO) {
-		T getBoard = boardService.getOne(bno);
+		Board getBoard = boardService.getOne(bno);
 		model.addAttribute("pageVO",pageVO);
 		model.addAttribute("result",getBoard);
 		return getRootAddress()+"/modify";
@@ -69,14 +71,14 @@ public abstract class BoardController <T extends Board,R extends RecommendOrOppo
 		boardService.addBoard(board);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	@PreAuthorize("isAuthenticated() and #board.useremail == authentication.principal.member.useremail")
+	@PreAuthorize("isAuthenticated() and #board.member.useremail == authentication.principal.member.useremail")
 	@PutMapping("/boards/{bno}")
 	public ResponseEntity<Void> modifyOne(@RequestBody T board,@PathVariable("bno") Long bno){
 		boardService.modify(bno,board);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
-	@PreAuthorize("isAuthenticated() and #board.useremail == authentication.principal.member.useremail")
+	@PreAuthorize("isAuthenticated() and #board.member.useremail == authentication.principal.member.useremail")
 	@DeleteMapping("/boards/{bno}")
 	public ResponseEntity<Void> deleteOne(@PathVariable("bno") Long bno,@RequestBody T board){
 		boardService.delete(bno);
@@ -86,7 +88,7 @@ public abstract class BoardController <T extends Board,R extends RecommendOrOppo
 	@PreAuthorize("isAuthenticated()")
 	@PatchMapping("/uprecommend/{bno}")
 	public ResponseEntity<String> upRecommend(@PathVariable("bno")Long bno,@RequestBody RecommendOrOppositeVO recommendOrOppositeVO){
-		R entity = makeOneRecommendOrOppositeEntity(recommendOrOppositeVO.getBno(),recommendOrOppositeVO.getUseremail(),true);
+		RecommendOrOpposite entity = makeOneRecommendOrOppositeEntity(recommendOrOppositeVO.getBno(),recommendOrOppositeVO.getUseremail(),true);
 		try {
 			boardService.upRecommendcnt(entity);
 			return new ResponseEntity<>("ok",HttpStatus.OK);
@@ -101,7 +103,7 @@ public abstract class BoardController <T extends Board,R extends RecommendOrOppo
 	@PatchMapping("/upopposite/{bno}")
 	public ResponseEntity<String> upOpposite(@PathVariable("bno")Long bno,@RequestBody RecommendOrOppositeVO recommendOrOppositeVO){
 		//
-		R entity = makeOneRecommendOrOppositeEntity(recommendOrOppositeVO.getBno(),recommendOrOppositeVO.getUseremail(),false);
+		RecommendOrOpposite entity = makeOneRecommendOrOppositeEntity(recommendOrOppositeVO.getBno(),recommendOrOppositeVO.getUseremail(),false);
 		try {
 			boardService.upOppositecnt(entity);
 			return new ResponseEntity<>("ok",HttpStatus.OK);

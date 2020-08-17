@@ -1,4 +1,4 @@
-package com.akak4456.domain.recommendoropposite;
+package com.akak4456.domain.scrap;
 
 import java.io.Serializable;
 
@@ -16,7 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Embeddable
 @EqualsAndHashCode
-public class RecommendOrOppositeId implements Serializable {
+public class ScrapId implements Serializable {
 	private Long board_id;
 	private String member_id;
 }

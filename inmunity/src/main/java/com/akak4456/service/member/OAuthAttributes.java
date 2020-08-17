@@ -44,7 +44,7 @@ public class OAuthAttributes {
 		return MemberEntity.builder()
 				.name(this.name)
 				.useremail(this.email)
-				.emailcheck(EmailCheck.Y)
+				.emailCheck(EmailCheck.Y)
 				.role(Role.ROLE_MEMBER)
 				.picture(this.picture)
 				.build();

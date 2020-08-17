@@ -32,7 +32,7 @@
 			</div>
 			<div class="my-btn-grp clearfix" role="group">
 				<button class="btn btn-primary float-right ret-btn">[[#{member.ret}]]</button>
-				<button th:if="${#authentication.principal} ne 'anonymousUser' and ${#authentication.principal.member.useremail} eq ${result.useremail}" 
+				<button th:if="${#authentication.principal} ne 'anonymousUser' and ${#authentication.principal.member.useremail} eq ${result.member.useremail}" 
 				class="btn btn-primary float-right modify-delete-btn">[[#{btn.updateanddelete}]]</button>
 			</div>
 		</form>

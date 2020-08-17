@@ -87,8 +87,9 @@ let replyModule = (function(){
 			let sendData = {
 					rno:rno,
 					reply:reply,
-					useremail:rowuseremail,
-					replyer:username
+					member:{
+						useremail:rowuseremail
+					}
 			};
 			modifyReply(sendData,function(data){
 				alert(replymodifysuccessmsg);
@@ -121,9 +122,10 @@ let replyModule = (function(){
 			let reply = rereplyAddEditoro.getData();
 			let sendData = {
 					reply:reply,
-					replyer:username,
 					parent_rno:parent_rno,
-					useremail:useremail
+					member:{
+						useremail:useremail
+					}
 			};
 			addReply(sendData,function(data){
 				alert(replyaddsuccessmsg);
@@ -152,7 +154,9 @@ let replyModule = (function(){
 			let rowuseremail = divElement.data("useremail");
 			let sendData = {
 					rno:rno,
-					useremail:rowuseremail
+					member:{
+						useremail:rowuseremail
+					}
 			};
 			deleteReply(sendData,function(data){
 				alert(replydeletesuccessmsg);
@@ -187,28 +191,37 @@ let replyModule = (function(){
 	};
 	let generateRow = function(row){
 		let ret = "";
-		if(row.parent_rno == -1)
+		let reply = row[0];
+		let memberName = row[1];
+		let replyuseremail;
+		if(reply.member != null){
+			replyuseremail = reply.member.useremail;
+		}else{
+			replyuseremail = null;
+			memberName = "삭제된 작성자";
+		}
+		if(reply.parent_rno == -1)
 		ret += "<div class='reply'";
 		else
 		ret += "<div class='rereply'";
-		ret += "data-rno='"+row.rno+"' data-useremail='"+row.useremail+"'>";
+		ret += "data-rno='"+reply.rno+"' data-useremail='"+replyuseremail+"'>";
 		ret += "	<div class='clearfix'>";
-		ret += "		<span class='float-left'>"+row.replyer+"</span>";
-		if(row.isdelete == "N"){
-		if(useremail==row.useremail){
+		ret += "		<span class='float-left'>"+memberName+"</span>";
+		if(reply.isdelete == "N"){
+		if(useremail==replyuseremail){
 		ret += "		<span class='reply-btn float-right'><a class='reply-delete-btn'>삭제</a></span>";
 		ret += "		<span class='reply-btn float-right'><a class='reply-modify-btn'>수정</a></span>";
 		}
-		if(row.parent_rno == -1)
+		if(useremail != null&&reply.parent_rno == -1)
 		ret += "		<span class='reply-btn float-right'><a class='rereply-add-btn'>대댓글</a></span>";
 		}
 		ret += "	</div>"
 		ret += "	<div class='clearfix'>";
-		ret += "		"+row.reply;
+		ret += "		"+reply.reply;
 		ret += "	</div>"
 		ret += "	<div class='clearfix'>";
-		if(row.isdelete == "N"){
-		ret += "	<span class='update-date float-left'>"+row.updatedate+"</span>";
+		if(reply.isdelete == "N"){
+		ret += "	<span class='update-date float-left'>"+reply.updatedate+"</span>";
 		}
 		ret += "	</div>"
 		ret += "</div>";
@@ -262,9 +275,10 @@ let replyModule = (function(){
 				let reply = addEditoro.getData();
 				let sendData = {
 						reply:reply,
-						replyer:username,
 						parent_rno:-1,
-						useremail:useremail
+						member:{
+							useremail:useremail
+						}		
 				};
 				addReply(sendData,function(data){
 					alert(replyaddsuccessmsg);

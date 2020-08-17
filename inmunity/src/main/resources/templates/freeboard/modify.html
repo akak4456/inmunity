@@ -57,9 +57,10 @@ $(".modify-btn").click(function(e){
 		title:$("#title").val(),
 		content:editoro.getData(),
 		bno:bno,
-		useremail:[[${result.useremail}]],
-		username:[[${result.username}]],
-		fileUpload:boardModule.getFileForm(editoro)
+		fileUpload:boardModule.getFileForm(editoro),
+		member:{
+			useremail:[[${result.member.useremail}]]
+		}
 	}
 	boardModule.modifyBoard(sendData,function(data){
 		alert(modifysuccessmsg);
@@ -74,7 +75,9 @@ $(".delete-btn").click(function(e){
 	if(confirm(deleteconfirmmsg)){
 		let sendData = {
 			bno:bno,
-			useremail:[[${result.useremail}]]
+			member:{
+				useremail:[[${result.member.useremail}]]
+			}
 		}
 		boardModule.deleteBoard(sendData,function(data){
 			alert(deletesuccessmsg);

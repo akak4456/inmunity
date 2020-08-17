@@ -14,7 +14,7 @@
 	    	</div>
 	    	<div class="card-body">
 	    		<form>
-  					<div class="form-group row">
+  					<div class="form-group row" th:if="${#authentication.principal.member.userid} != null">
     					<label for="staticPw" class="col-sm-2 col-form-label">[[#{member.pw}]]</label>
     					<div class="col-sm-10">
       						<input type="password" class="form-control-plaintext" id="staticPw">

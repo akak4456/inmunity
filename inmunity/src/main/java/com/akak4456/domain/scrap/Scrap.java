@@ -1,41 +1,40 @@
 package com.akak4456.domain.scrap;
 
-import javax.persistence.CascadeType;
+import java.time.LocalDateTime;
+
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.akak4456.domain.board.Board;
 import com.akak4456.domain.member.MemberEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Setter
+@SuperBuilder
+@NoArgsConstructor
 @Entity
-@Table(name="tbl_scrap",uniqueConstraints = @UniqueConstraint(columnNames = { "bno", "member" }))
-@SequenceGenerator(name="scrap_seq", initialValue=1, allocationSize=1)
-@EqualsAndHashCode(of="sno")
 public class Scrap {
-	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="scrap_seq")
-	private Long sno;
-	
-	
-	@OneToOne
+	@EmbeddedId
+	private ScrapId id;
+	@MapsId("board_id")
+	@ManyToOne
 	@JoinColumn(name="bno")
 	private Board board;
-	
-	@OneToOne
-	@JoinColumn(name="member")
+	@MapsId("member_id")
+	@ManyToOne
+	@JoinColumn(name="useremail")
 	private MemberEntity member;
+	
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@CreationTimestamp
+	private LocalDateTime regdate;
 }

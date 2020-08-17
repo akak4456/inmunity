@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
@@ -21,18 +22,24 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.akak4456.domain.board.Board;
+import com.akak4456.domain.member.MemberEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Setter
+@SuperBuilder
+@NoArgsConstructor
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="DTYPE")
 @SequenceGenerator(name="reply_seq", initialValue=1, allocationSize=1)
+@EqualsAndHashCode(of="rno")
 public abstract class Reply<B extends Board> {
 	@Transient
 	private final char[] CHAR_SET = {
@@ -54,15 +61,6 @@ public abstract class Reply<B extends Board> {
 	@NotEmpty
 	private String reply;
 	
-	/*
-	 유저정보를 담는 것
-	 replyer는 member의 username과 동일함
-	 */
-	@NotNull
-	private String useremail;
-	@NotNull
-	private String replyer;
-	
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@CreationTimestamp
 	private LocalDateTime regdate;
@@ -72,7 +70,11 @@ public abstract class Reply<B extends Board> {
 	private LocalDateTime updatedate;
 	
 	@Column(columnDefinition = "char(1) default 'N'")
+	@Builder.Default
 	private char isdelete = 'N';
+	public void setPath(String path) {
+		this.path = path;
+	}
 	
 	public void postPersist() {
 		StringBuffer result1 = new StringBuffer();
@@ -142,9 +144,27 @@ public abstract class Reply<B extends Board> {
 		//최종적으로 path에는 (parent_rno변형결과가 들어가게 됨)(rno변형결과)
 		return result.toString();
 	}
-	
+	public void setReply(String reply2) {
+		// TODO Auto-generated method stub
+		this.reply=reply2;
+	}
+	public void setIsdelete(char isdelete) {
+		this.isdelete = isdelete;
+	}
 	@Type(type="Board")
-	@JsonIgnore
 	@ManyToOne
+	@JoinColumn(name="bno")
 	private B board;
+	
+	@ManyToOne
+	@JoinColumn(name="useremail")
+	private MemberEntity member;
+	
+	public void setMember(MemberEntity member) {
+		this.member = member;
+	}
+	
+	public void setBoard(B board) {
+		this.board = board;
+	}
 }

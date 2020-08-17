@@ -1,27 +1,23 @@
 package com.akak4456.domain.member;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Setter
+@SuperBuilder
+@NoArgsConstructor
 @ToString
 @Entity
-@Table(name="tbl_member")
-@EqualsAndHashCode(of="userid")
+@EqualsAndHashCode(of="useremail")
 public class MemberEntity {
 	
 	@Id
@@ -38,28 +34,24 @@ public class MemberEntity {
 	
 	@Enumerated(EnumType.ORDINAL)
 	@NotNull
-	private EmailCheck emailCheck = EmailCheck.N;
+	private EmailCheck emailCheck;
 	
 	private String authKey;
 	
 	@NotNull
 	private String name;
 	
-	private String picture = "none";
-	
-	public MemberEntity() {
-		
+	private String picture;
+
+	public void setName(String username) {
+		// TODO Auto-generated method stub
+		this.name = username;
 	}
-	
-	
-	@Builder
-	public MemberEntity(String userid,String userpw,String useremail,Role role, EmailCheck emailcheck,String name,String picture) {
-		this.userid = userid;
+
+	public void setUserpw(String userpw) {
+		// TODO Auto-generated method stub
 		this.userpw = userpw;
-		this.useremail = useremail;
-		this.role = role;
-		this.emailCheck = emailcheck;
-		this.name = name;
-		this.picture = picture;
 	}
+	
+
 }

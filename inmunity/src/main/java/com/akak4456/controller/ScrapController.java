@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.akak4456.domain.scrap.Scrap;
-import com.akak4456.service.scrap.ScrapService;
+import com.akak4456.service.ScrapService;
 import com.akak4456.vo.PageMaker;
 import com.akak4456.vo.PageVO;
 import com.akak4456.vo.ScrapVO;
@@ -35,7 +35,7 @@ public class ScrapController {
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/scrap/list")
 	public ResponseEntity<PageMaker<Scrap>> list(PageVO pageVO){
-		Pageable pageable = pageVO.makePageble(0, "sno");
+		Pageable pageable = pageVO.makePageble(0, "regdate");
 		PageMaker<Scrap> result = new PageMaker<Scrap>(scrapService.getListWithUseremail(pageVO.getKeyword(), pageable));
 		return new ResponseEntity<>(result,HttpStatus.OK);
 	}
