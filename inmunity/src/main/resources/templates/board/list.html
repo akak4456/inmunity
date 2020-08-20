@@ -1,0 +1,126 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{layout/main_layout}">
+<head>
+<meta charset="UTF-8">
+</head>
+<div layout:fragment="content">
+	<section>
+		<div>
+			<h1 class="float-left boardtitle"></h1>
+			<button class="float-right btn btn-success new-article">[[#{btn.write}]]</button>
+		</div>
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">[[#{board.title}]]</th>
+					<th scope="col">[[#{board.writer}]]</th>
+					<th scope="col">[[#{board.regdate}]]</th>
+					<th scope="col">[[#{board.viewscount}]]</th>
+					<th scope="col">[[#{board.recommend}]]</th>
+					<th scope="col">[[#{board.opposite}]]</th>
+				</tr>
+			</thead>
+			<tbody class="boardlist">
+				<tr th:each="board:${result.result.content}">
+					<th scope='row'>[[${board.bno}]]</th>
+					<td><a th:href="${board.bno}">[[${board.title}]]</a>
+					<td>[[${board.member.name}]]</td>
+					<td>[[${#strings.substring(board.updatedate,0,10)}]]</td>
+					<td>[[${board.viewcnt}]]</td>
+					<td>[[${board.recommendcnt}]]</td>
+					<td>[[${board.oppositecnt}]]</td>
+				</tr>
+			</tbody>
+		</table>
+		<ul class="pagination justify-content-center">
+			<li class="page-item" th:if="${result.prevPage}"><a
+				class="page-link" th:href="${result.prevPage.pageNumber}+1">PREV</a></li>
+
+			<li class="page-item"
+				th:classappend="${p.pageNumber == result.currentPageNum -1}?active:''"
+				th:each="p:${result.pageList}"><a class="page-link"
+				th:href="${p.pageNumber}+1">[[${p.pageNumber}+1]]</a></li>
+
+			<li class="page-item" th:if="${result.nextPage}"><a
+				class="page-link" th:href="${result.nextPage.pageNumber}+1">NEXT</a></li>
+		</ul>
+		<form class="form-inline">
+  			<div class="form-group mb-2">
+  				<select class="form-control" id="searchType">
+  					<option value="T">[[#{board.title}]]</option>
+  					<option value="C">[[#{board.content}]]</option>
+  					<option value="W">[[#{board.writer}]]</option>
+  					<option value="E">[[#{member.email}]]</option>
+  				</select>
+  			</div>
+  			<div class="form-group mx-sm-3 mb-2">
+    			<input type="text" class="form-control" id="searchKeyword" th:placeholder="#{search.enter}">
+  			</div>
+  			<button type="submit" class="btn btn-primary mb-2 search-btn">[[#{search}]]</button>
+		</form>
+	</section>
+</div>
+<th:block layout:fragment="script">
+<script th:inline="javascript">
+console.log(rootAddress);
+let boardtitle;
+switch(rootAddress){
+case "/freeboard":
+	boardtitle = [[#{freeboardtitle}]];
+	break;
+case "/graduateboard":
+	boardtitle = [[#{graduatetitle}]];
+	break;
+case "/newbieboard":
+	boardtitle = [[#{newbietitle}]];
+	break;
+case "/jobboard":
+	boardtitle= [[#{jobtitle}]];
+	break;
+}
+$(".boardtitle").html(boardtitle);
+$(".boardlist a").click(function(e){
+	e.preventDefault();
+	let no = $(this).attr('href');
+	moveUsingForm(
+			"pageForm",
+			rootAddress+"/boards/"+no,
+			-1
+	);
+});
+$(".pagination a").click(function(e){
+	e.preventDefault();
+	moveUsingForm(
+			"pageForm",
+			rootAddress+"/boards",
+			 $(this).attr('href')
+	);
+});
+
+$(".new-article").click(function(e){
+	e.preventDefault();
+	moveUsingForm(
+			"pageForm",
+			rootAddress+"/add",
+			-1
+	);
+});
+$(".search-btn").click(function(e){
+	e.preventDefault();
+	const type =  $("#searchType").find(":selected").val();
+	const keyword = $("#searchKeyword").val();
+	moveUsingForm(
+			"pageForm",
+			rootAddress+"/boards",
+			-1,
+			type,
+			keyword
+			
+	);
+});
+</script>
+</th:block>
+</html>

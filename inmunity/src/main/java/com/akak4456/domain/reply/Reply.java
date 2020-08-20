@@ -18,7 +18,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.akak4456.domain.board.Board;
@@ -29,7 +28,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Getter
@@ -40,7 +38,7 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorColumn(name="DTYPE")
 @SequenceGenerator(name="reply_seq", initialValue=1, allocationSize=1)
 @EqualsAndHashCode(of="rno")
-public abstract class Reply<B extends Board> {
+public abstract class Reply {
 	@Transient
 	private final char[] CHAR_SET = {
 			'0','1','2','3','4','5','6','7','8','9',
@@ -151,10 +149,9 @@ public abstract class Reply<B extends Board> {
 	public void setIsdelete(char isdelete) {
 		this.isdelete = isdelete;
 	}
-	@Type(type="Board")
 	@ManyToOne
 	@JoinColumn(name="bno")
-	private B board;
+	private Board board;
 	
 	@ManyToOne
 	@JoinColumn(name="useremail")
@@ -164,7 +161,7 @@ public abstract class Reply<B extends Board> {
 		this.member = member;
 	}
 	
-	public void setBoard(B board) {
+	public void setBoard(Board board) {
 		this.board = board;
 	}
 }

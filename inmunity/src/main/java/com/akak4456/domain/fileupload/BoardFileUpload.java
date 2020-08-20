@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @Entity
-@DiscriminatorValue(value = "")
+@DiscriminatorValue(value = "BFU")
 public class BoardFileUpload extends FileUpload {
 	
 }

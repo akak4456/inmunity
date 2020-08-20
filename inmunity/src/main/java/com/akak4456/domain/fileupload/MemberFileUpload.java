@@ -23,7 +23,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @Entity
-@DiscriminatorValue(value = "")
+@DiscriminatorValue(value = "MFU")
 public class MemberFileUpload extends FileUpload {
 	@OneToOne
 	@JoinColumn(name="useremail")

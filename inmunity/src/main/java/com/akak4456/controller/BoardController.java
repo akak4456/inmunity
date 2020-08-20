@@ -16,31 +16,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.akak4456.domain.board.Board;
 import com.akak4456.domain.recommendoropposite.RecommendOrOpposite;
-import com.akak4456.domain.recommendoropposite.RecommendOrOppositeEnum;
-import com.akak4456.domain.recommendoropposite.RecommendOrOppositeId;
+import com.akak4456.domain.reply.Reply;
 import com.akak4456.exception.RecommendOrOppositeAlreadyExist;
-import com.akak4456.service.BoardService;
+import com.akak4456.service.board.BoardService;
 import com.akak4456.vo.PageMaker;
 import com.akak4456.vo.PageVO;
 import com.akak4456.vo.RecommendOrOppositeVO;
 
 import lombok.extern.java.Log;
 @Log
-public abstract class BoardController <T extends Board>{
+public abstract class BoardController <B extends Board>{
 	@Autowired
-	protected BoardService boardService;
-	
-	protected abstract String getRootAddress();
+	protected BoardService<B> boardService;
 	
 	protected abstract RecommendOrOpposite makeOneRecommendOrOppositeEntity(Long bno,String useremail,boolean isRecommend);
 	
 	@GetMapping("/boards")
 	public String getList(Model model,PageVO pageVO){
 		Pageable pageable = pageVO.makePageble(0, "bno");
-		PageMaker<Board> pageMaker = new PageMaker<Board>(boardService.getListWithPaging(pageVO.getType(), pageVO.getKeyword(), pageable));
+		PageMaker<B> pageMaker = new PageMaker<B>(boardService.getListWithPaging(pageVO.getType(), pageVO.getKeyword(), pageable));
 		model.addAttribute("pageVO",pageVO);
 		model.addAttribute("result",pageMaker);
-		return getRootAddress()+"/list";
+		return "/board/list";
 	}
 	
 	@GetMapping("/boards/{bno}")
@@ -48,7 +45,7 @@ public abstract class BoardController <T extends Board>{
 		Board getBoard = boardService.getOne(bno);
 		model.addAttribute("pageVO",pageVO);
 		model.addAttribute("result",getBoard);
-		return getRootAddress()+"/one";
+		return "/board/one";
 	}
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/modify/{bno}")
@@ -56,31 +53,31 @@ public abstract class BoardController <T extends Board>{
 		Board getBoard = boardService.getOne(bno);
 		model.addAttribute("pageVO",pageVO);
 		model.addAttribute("result",getBoard);
-		return getRootAddress()+"/modify";
+		return "/board/modify";
 	}
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/add")
 	public String add(Model model,PageVO pageVO) {
 		model.addAttribute("pageVO",pageVO);
-		return getRootAddress()+"/add";
+		return "/board/add";
 	}
 	
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/boards")
-	public ResponseEntity<Void> addOne(@RequestBody T board){
+	public ResponseEntity<Void> addOne(@RequestBody B board){
 		boardService.addBoard(board);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	@PreAuthorize("isAuthenticated() and #board.member.useremail == authentication.principal.member.useremail")
 	@PutMapping("/boards/{bno}")
-	public ResponseEntity<Void> modifyOne(@RequestBody T board,@PathVariable("bno") Long bno){
+	public ResponseEntity<Void> modifyOne(@RequestBody B board,@PathVariable("bno") Long bno){
 		boardService.modify(bno,board);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@PreAuthorize("isAuthenticated() and #board.member.useremail == authentication.principal.member.useremail")
 	@DeleteMapping("/boards/{bno}")
-	public ResponseEntity<Void> deleteOne(@PathVariable("bno") Long bno,@RequestBody T board){
+	public ResponseEntity<Void> deleteOne(@PathVariable("bno") Long bno,@RequestBody B board){
 		boardService.delete(bno);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

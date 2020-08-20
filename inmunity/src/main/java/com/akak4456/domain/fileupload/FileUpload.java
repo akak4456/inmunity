@@ -1,7 +1,6 @@
 package com.akak4456.domain.fileupload;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -10,17 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.akak4456.domain.board.Board;
-import com.akak4456.domain.member.MemberEntity;
-import com.akak4456.domain.recommendoropposite.RecommendOrOpposite;
-import com.akak4456.domain.reply.Reply;
-import com.akak4456.domain.scrap.Scrap;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.EqualsAndHashCode;
@@ -52,4 +45,8 @@ public abstract class FileUpload {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@UpdateTimestamp
 	private LocalDateTime updatedate;
+	
+	public void setRegdate(LocalDateTime regdate) {
+		this.regdate = regdate;
+	}
 }

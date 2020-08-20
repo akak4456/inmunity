@@ -10,6 +10,7 @@ import com.akak4456.domain.member.Role;
 import com.akak4456.domain.recommendoropposite.RecommendOrOpposite;
 import com.akak4456.domain.recommendoropposite.RecommendOrOppositeEnum;
 import com.akak4456.domain.recommendoropposite.RecommendOrOppositeId;
+import com.akak4456.domain.reply.FreeReply;
 
 import lombok.extern.java.Log;
 
@@ -17,11 +18,6 @@ import lombok.extern.java.Log;
 @Log
 @RequestMapping("/freeboard/**")
 public class FreeBoardController extends BoardController<FreeBoard> {
-	@Override
-	protected String getRootAddress() {
-		// TODO Auto-generated method stub
-		return "/freeboard";
-	}
 
 	@Override
 	protected RecommendOrOpposite makeOneRecommendOrOppositeEntity(Long bno, String useremail, boolean isRecommend) {

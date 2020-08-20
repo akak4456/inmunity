@@ -22,6 +22,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @Entity
-@DiscriminatorValue(value = "")
-public class FreeBoard extends Board<FreeReply> {
+@DiscriminatorValue(value = "FB")
+public class FreeBoard extends Board {
 }

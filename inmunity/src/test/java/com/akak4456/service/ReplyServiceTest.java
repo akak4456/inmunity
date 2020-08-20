@@ -15,20 +15,19 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.akak4456.domain.board.Board;
-import com.akak4456.domain.board.FreeBoard;
+import com.akak4456.domain.fileupload.BoardFileUpload;
 import com.akak4456.domain.member.EmailCheck;
 import com.akak4456.domain.member.MemberEntity;
 import com.akak4456.domain.member.Role;
-import com.akak4456.domain.reply.FreeReply;
 import com.akak4456.domain.reply.Reply;
 import com.akak4456.inmunity.InmunityApplication;
-import com.akak4456.persistent.BoardRepository;
 import com.akak4456.persistent.FileUploadRepository;
 import com.akak4456.persistent.MemberRepository;
 import com.akak4456.persistent.RecommendOrOppositeRepository;
-import com.akak4456.persistent.ReplyRepository;
 import com.akak4456.persistent.ScrapRepository;
-import com.akak4456.vo.PageMaker;
+import com.akak4456.persistent.board.BoardRepository;
+import com.akak4456.persistent.reply.ReplyRepository;
+import com.akak4456.service.reply.ReplyService;
 import com.akak4456.vo.PageVO;
 
 import lombok.extern.java.Log;
@@ -37,18 +36,18 @@ import lombok.extern.java.Log;
 @SpringBootTest(classes = InmunityApplication.class)
 @Log
 @Commit
-public class ReplyServiceTest {
+public abstract class ReplyServiceTest<B extends Board, R extends Reply> {
 	@Autowired
-	private ReplyService replyService;
+	private ReplyService<R> replyService;
 	
 	@Autowired
-	private ReplyRepository replyRepo;
+	private ReplyRepository<R> replyRepo;
 	
 	@Autowired
 	private MemberRepository memberRepo;
 	
 	@Autowired
-	private BoardRepository boardRepo;
+	private BoardRepository<B> boardRepo;
 	
 	@Autowired
 	private RecommendOrOppositeRepository roRepo;
@@ -61,7 +60,11 @@ public class ReplyServiceTest {
 	
 	private MemberEntity member;
 	
-	private FreeBoard board;
+	private B board;
+	
+	protected abstract B makeOneBoard(String title,String content,MemberEntity member,List<BoardFileUpload> boardFileUpload);
+	protected abstract R makeOneReply(String reply,MemberEntity member,B board,Long parent_rno);
+	
 	@Before
 	public void setUp() {
 		fileUploadRepo.deleteAll();
@@ -75,27 +78,23 @@ public class ReplyServiceTest {
 		}else {
 			member = memberRepo.findById("akak4456@naver.com").get();
 		}
-		board = FreeBoard.builder()
-				.title("title" )
-				.content("content" )
-				.member(member)
-				.build();
+		board = makeOneBoard("title","content",member,null);
 		boardRepo.save(board);
 	}
 	@Test
 	public void addReplyTest() {
 		//equalCount(board,0);
-		FreeReply reply1 = FreeReply.builder().board(board).member(member).reply("reply1").parent_rno(-1L).build();
+		R reply1 = makeOneReply("reply",member,board,-1L);
 		log.info("addReply query start");
 		replyService.addReply(reply1);
 		log.info("addReply query done");
 		//equalCount(board,1);
-		FreeReply reply2 = FreeReply.builder().board(board).member(member).reply("reply2").parent_rno(-1L).build();
+		R reply2 = makeOneReply("reply2",member,board,-1L);
 		log.info("addReply query start");
 		replyService.addReply(reply2);
 		log.info("addReply query done");
 		//equalCount(board,2);
-		FreeReply reply3 = FreeReply.builder().board(board).member(member).reply("reply3").parent_rno(-1L).build();
+		R reply3 = makeOneReply("reply3",member,board,-1L);
 		log.info("addReply query start");
 		replyService.addReply(reply3);
 		log.info("addReply query done");
@@ -103,60 +102,56 @@ public class ReplyServiceTest {
 	}
 	@Test
 	public void updateTest() {
-		FreeReply reply1 = FreeReply.builder().board(board).member(member).reply("reply1").parent_rno(-1L).build();
+		R reply1 = makeOneReply("reply1",member,board,-1L);
 		replyService.addReply(reply1);
 		reply1.setReply("new reply");
 		log.info("updateReply query start");
 		replyService.updateReply(reply1.getRno(),reply1);
 		log.info("updateReply query done");
-		Reply updatedReply = replyRepo.findById(reply1.getRno()).get();
+		R updatedReply = replyRepo.findById(reply1.getRno()).get();
 		assertEquals(updatedReply.getReply(),"new reply");
 	}
 	
 	@Test
 	public void deleteTest() {
-		FreeReply reply = FreeReply.builder().board(board).member(member).reply("reply1").parent_rno(-1L).build();
+		R reply = makeOneReply("reply",member,board,-1L);
 		replyService.addReply(reply);
 		assertEquals(replyRepo.count(),1);
 		log.info("deleteReply query start");
 		replyService.deleteReply(reply.getRno());
 		log.info("deleteReply query done");
 		assertEquals(replyRepo.count(),1);
-		Reply deleteReply = replyRepo.findById(reply.getRno()).get();
+		R deleteReply = replyRepo.findById(reply.getRno()).get();
 		assertEquals(deleteReply.getReply(),"삭제된 내용");
-	}
-	
-	private Reply makeOneReply(Long parent_rno,String reply) {
-		return FreeReply.builder().board(board).member(member).reply(reply).parent_rno(parent_rno).build();
 	}
 	
 	@Test
 	public void hierarchicaltest() {
-		Reply reply1 = makeOneReply(-1L,"reply1");
+		R reply1 = makeOneReply("reply1",member,board,-1L);
 		replyService.addReply(reply1);
-		Reply reply1_1 = makeOneReply(reply1.getRno(),"reply1_1");
+		R reply1_1 = makeOneReply("reply1_1",member,board,reply1.getRno());
 		replyService.addReply(reply1_1);
-		Reply reply1_2 = makeOneReply(reply1.getRno(),"reply1_2");
+		R reply1_2 = makeOneReply("reply1_2",member,board,reply1.getRno());
 		replyService.addReply(reply1_2);
-		Reply reply1_3 = makeOneReply(reply1.getRno(),"reply1_3");
+		R reply1_3 = makeOneReply("reply1_3",member,board,reply1.getRno());
 		replyService.addReply(reply1_3);
 		
-		Reply reply2 = makeOneReply(-1L,"reply2");
+		R reply2 = makeOneReply("reply2",member,board,-1L);
 		replyService.addReply(reply2);
-		Reply reply2_1 = makeOneReply(reply2.getRno(),"reply2_1");
+		R reply2_1 = makeOneReply("reply2_1",member,board,reply2.getRno());
 		replyService.addReply(reply2_1);
-		Reply reply1_4 = makeOneReply(reply1.getRno(),"reply1_4");
+		R reply1_4 = makeOneReply("reply1_4",member,board,reply1.getRno());
 		replyService.addReply(reply1_4);
-		Reply reply2_2 = makeOneReply(reply2.getRno(),"reply2_2");
+		R reply2_2 = makeOneReply("reply2_2",member,board,reply2.getRno());
 		replyService.addReply(reply2_2);
 		
-		Reply reply3 = makeOneReply(-1L,"reply3");
+		R reply3 = makeOneReply("reply3",member,board,-1L);
 		replyService.addReply(reply3);
-		Reply reply3_1 = makeOneReply(reply3.getRno(),"reply3_1");
+		R reply3_1 = makeOneReply("reply3_1",member,board,reply3.getRno());
 		replyService.addReply(reply3_1);
-		Reply reply2_3 = makeOneReply(reply2.getRno(),"reply2_3");
+		R reply2_3 = makeOneReply("reply2_3",member,board,reply2.getRno());
 		replyService.addReply(reply2_3);
-		Reply reply3_2 = makeOneReply(reply3.getRno(),"reply3_2");
+		R reply3_2 = makeOneReply("reply3_2",member,board,reply3.getRno());
 		replyService.addReply(reply3_2);
 		/*
 		 reply는 아래와 같아야 함
@@ -180,11 +175,11 @@ public class ReplyServiceTest {
 		Pageable pageable = new PageVO(1).makePageble(1,"path");
 		//첫번째 페이지 조사
 		log.info("getListWithPaging query start");
-		Page<Reply> page = replyService.getListWithPaging(board.getBno(), pageable);
+		Page<R> page = replyService.getListWithPaging(board.getBno(), pageable);
 		log.info("getListWithPaging query done");
 		
 		
-		List<Reply> replies = page.getContent();
+		List<R> replies = page.getContent();
 		assertEquals(replies.size(),10);
 		/*
 		 * assertEquals(replies.get(0),(Object)reply1);

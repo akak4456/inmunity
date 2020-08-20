@@ -25,7 +25,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.akak4456.domain.fileupload.BoardFileUpload;
 import com.akak4456.domain.member.MemberEntity;
-import com.akak4456.domain.reply.Reply;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,7 +43,7 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorColumn(name="DTYPE")
 @SequenceGenerator(name="board_seq", initialValue=1, allocationSize=1)
 @EqualsAndHashCode(of="bno")
-public abstract class Board <R extends Reply> {
+public abstract class Board {
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="board_seq")
 	private Long bno;
@@ -72,7 +71,7 @@ public abstract class Board <R extends Reply> {
 	@Builder.Default
 	private Long oppositecnt = 0L;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="useremail")
 	private MemberEntity member;
 	

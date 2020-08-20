@@ -11,15 +11,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.akak4456.domain.board.Board;
 import com.akak4456.domain.member.EmailCheck;
 import com.akak4456.domain.member.MemberEntity;
 import com.akak4456.domain.member.Role;
-import com.akak4456.persistent.BoardRepository;
+import com.akak4456.domain.reply.Reply;
 import com.akak4456.persistent.FileUploadRepository;
 import com.akak4456.persistent.MemberRepository;
 import com.akak4456.persistent.RecommendOrOppositeRepository;
-import com.akak4456.persistent.ReplyRepository;
 import com.akak4456.persistent.ScrapRepository;
+import com.akak4456.persistent.board.BoardRepository;
+import com.akak4456.persistent.reply.ReplyRepository;
 import com.akak4456.vo.MemberVO;
 
 @Service
@@ -33,9 +35,9 @@ public class MemberService implements UserDetailsService {
 	@Autowired
 	private ScrapRepository scrapRepo;
 	@Autowired
-	private BoardRepository boardGeneralRepo;
+	private BoardRepository<Board> boardGeneralRepo;
 	@Autowired
-	private ReplyRepository replyGeneralRepo;
+	private ReplyRepository<Reply> replyGeneralRepo;
 	@Autowired
 	private RecommendOrOppositeRepository roRepo;
 	

@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.akak4456.domain.board.Board;
 import com.akak4456.domain.reply.Reply;
-import com.akak4456.service.BoardService;
-import com.akak4456.service.ReplyService;
+import com.akak4456.service.LogService;
 import com.akak4456.vo.PageMaker;
 import com.akak4456.vo.PageVO;
 
@@ -25,9 +24,7 @@ import lombok.extern.java.Log;
 @RequestMapping("/mylog/**")
 public class MylogController {
 	@Autowired
-	private BoardService boardMyLogService;
-	@Autowired
-	private ReplyService replyMyLogService;
+	private LogService logService;
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/showmyboard")
 	public void showmyboard(Model model, PageVO pageVO) {
@@ -39,7 +36,7 @@ public class MylogController {
 	@ResponseBody
 	public ResponseEntity<PageMaker<Board>> myboards(PageVO pageVO){
 		Pageable pageable = pageVO.makePageble(0, "bno");
-		PageMaker<Board> result = new PageMaker<Board>(boardMyLogService.getListWithUseremail(pageVO.getKeyword(), pageable));
+		PageMaker<Board> result = new PageMaker<Board>(logService.getBoardListWithUseremail(pageVO.getKeyword(), pageable));
 		return new ResponseEntity<>(result,HttpStatus.OK);
 	}
 	
@@ -54,7 +51,7 @@ public class MylogController {
 	@ResponseBody
 	public ResponseEntity<PageMaker<Reply>> myreply(PageVO pageVO){
 		Pageable pageable = pageVO.makePageble(0, "rno");
-		PageMaker<Reply> result = new PageMaker<Reply>(replyMyLogService.getListWithUseremail(pageVO.getKeyword(), pageable));
+		PageMaker<Reply> result = new PageMaker<Reply>(logService.getReplyListWithUseremail(pageVO.getKeyword(), pageable));
 		return new ResponseEntity<>(result,HttpStatus.OK);
 	}
 	

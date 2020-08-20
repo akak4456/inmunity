@@ -34,6 +34,7 @@
 	</section>
 </div>
 <th:block layout:fragment="script">
+<script th:inline="javascript" th:src="@{'/js/log.js'}"></script>
 <script th:inline="javascript">
 let passParam = {
 		page:1,
@@ -45,18 +46,18 @@ let listGet = function(){
 		let inserted = "";
 		data.result.content.forEach(function(row){
 			inserted += "<tr>";
-			inserted += "	<th scope='row'>"+row.bno+"</th>";
-			inserted += "	<td><a href='"+row.bno+"'>"+row.title+"</a></td>";
+			inserted += "	<th scope='row'>"+row[0].bno+"</th>";
+			inserted += "	<td><a href='/"+getLogAddress(row[1])+"/boards/"+row[0].bno+"'>"+row[0].title+"</a></td>";
 			inserted += "</tr>";
 		});
 		$(".boardlist").html("");
 		$(".boardlist").append(inserted);
 		$("td a").click(function(e){
 			e.preventDefault();
-			const no = $(this).attr("href");
+			const address = $(this).attr("href");
 			moveUsingForm(
 					"pageForm",
-					"/freeboard/boards/"+no,
+					address,
 					-1
 			);
 		})

@@ -16,14 +16,15 @@ import com.akak4456.domain.board.FreeBoard;
 import com.akak4456.domain.member.EmailCheck;
 import com.akak4456.domain.member.MemberEntity;
 import com.akak4456.domain.member.Role;
+import com.akak4456.domain.reply.Reply;
 import com.akak4456.exception.ScrapAlreadyExist;
 import com.akak4456.inmunity.InmunityApplication;
-import com.akak4456.persistent.BoardRepository;
 import com.akak4456.persistent.FileUploadRepository;
 import com.akak4456.persistent.MemberRepository;
 import com.akak4456.persistent.RecommendOrOppositeRepository;
-import com.akak4456.persistent.ReplyRepository;
 import com.akak4456.persistent.ScrapRepository;
+import com.akak4456.persistent.board.BoardRepository;
+import com.akak4456.persistent.reply.ReplyRepository;
 import com.akak4456.vo.PageVO;
 
 import lombok.extern.java.Log;
@@ -34,16 +35,14 @@ import lombok.extern.java.Log;
 @Commit
 public class ScrapServiceTest {
 	@Autowired
-	private BoardRepository boardRepo;
+	private BoardRepository<Board> boardRepo;
 	@Autowired
 	private FileUploadRepository fileUploadRepo;
 	@Autowired
 	private MemberRepository memberRepo; 
-	@Autowired
-	private BoardService boardService;
 	
 	@Autowired
-	private ReplyRepository replyRepo;
+	private ReplyRepository<Reply> replyRepo;
 	
 	@Autowired
 	private RecommendOrOppositeRepository roRepo;

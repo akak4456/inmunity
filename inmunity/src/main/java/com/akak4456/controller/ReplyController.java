@@ -14,22 +14,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.akak4456.domain.board.Board;
 import com.akak4456.domain.reply.Reply;
-import com.akak4456.service.ReplyService;
+import com.akak4456.service.reply.ReplyService;
 import com.akak4456.vo.PageMaker;
 import com.akak4456.vo.PageVO;
 
+import lombok.extern.java.Log;
 public abstract class ReplyController<B extends Board, R extends Reply> {
 	
 	@Autowired
-	protected ReplyService replyService;
+	protected ReplyService<R> replyService;
 	
 	protected abstract B makeOneEmptyBoardByBno(Long bno);
 	@GetMapping("/reply/{bno}")
-	public ResponseEntity<PageMaker<Reply>> getList(@PathVariable("bno")Long bno,PageVO pageVO){
+	public ResponseEntity<PageMaker<R>> getList(@PathVariable("bno")Long bno,PageVO pageVO){
 		Pageable pageable = null;
 		pageable = pageVO.makePageble(1, "path");
-		PageMaker<Reply> pageMaker = new PageMaker<Reply>(replyService.getListWithPaging(bno, pageable));
+		PageMaker<R> pageMaker = new PageMaker<R>(replyService.getListWithPaging(bno, pageable));
+		
 		return new ResponseEntity<>(pageMaker,HttpStatus.OK);
+		
 	}
 	
 	@PreAuthorize("isAuthenticated()")

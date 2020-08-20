@@ -1,8 +1,68 @@
-<html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{layout/main_layout}">
 <head>
-	<meta charset="utf-8">
+<meta charset="UTF-8">
+<style>
+.card-header a{
+	text-decoration:none;
+	color:black;
+}
+</style>
 </head>
-<body>
-<h1>index</h1>
-</body>
+<div layout:fragment="content">
+	<section>
+		<div class="container">
+			<div class="row">
+				<div class="card col-md-6">
+					<div class="card-header">
+						<a href="/freeboard/boards">[[#{freeboardtitle}]]</a>
+					</div>
+			 		<ul class="list-group list-group-flush">
+			   			<li class="list-group-item" th:each="board:${freeboard.result.content}">
+			   				<a th:href="@{/freeboard/boards/{bno}(bno=${board.bno})}">[[${board.title}]]</a>
+			   			</li>
+			 		</ul>
+				</div>
+				<div class="card col-md-6">
+					<div class="card-header">
+						<a href="/graduateboard/boards">[[#{graduatetitle}]]</a>
+					</div>
+			 		<ul class="list-group list-group-flush">
+			   			<li class="list-group-item" th:each="board:${graduateboard.result.content}">
+			   				<a th:href="@{/graduateboard/boards/{bno}(bno=${board.bno})}">[[${board.title}]]</a>
+			   			</li>
+			 		</ul>
+				</div>
+			</div>
+			<div class="row">
+				<div class="card col-md-6">
+					<div class="card-header">
+						<a href="/newbieboard/boards">[[#{newbietitle}]]</a>
+					</div>
+			 		<ul class="list-group list-group-flush">
+			   			<li class="list-group-item" th:each="board:${newbieboard.result.content}">
+			   				<a th:href="@{/newbieboard/boards/{bno}(bno=${board.bno})}">[[${board.title}]]</a>
+			   			</li>
+			 		</ul>
+				</div>
+				<div class="card col-md-6">
+					<div class="card-header">
+						<a href="/jobboard/boards">[[#{jobtitle}]]</a>
+					</div>
+			 		<ul class="list-group list-group-flush">
+			   			<li class="list-group-item" th:each="board:${jobboard.result.content}">
+			   				<a th:href="@{/jobboard/boards/{bno}(bno=${board.bno})}">[[${board.title}]]</a>
+			   			</li>
+			 		</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+<th:block layout:fragment="script">
+<script th:inline="javascript">
+</script>
+</th:block>
 </html>

@@ -13,11 +13,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.akak4456.domain.board.Board;
 import com.akak4456.domain.board.FreeBoard;
 import com.akak4456.domain.fileupload.BoardFileUpload;
 import com.akak4456.domain.member.EmailCheck;
@@ -26,15 +26,16 @@ import com.akak4456.domain.recommendoropposite.RecommendOrOpposite;
 import com.akak4456.domain.recommendoropposite.RecommendOrOppositeEnum;
 import com.akak4456.domain.recommendoropposite.RecommendOrOppositeId;
 import com.akak4456.domain.reply.FreeReply;
+import com.akak4456.domain.reply.Reply;
 import com.akak4456.domain.scrap.Scrap;
 import com.akak4456.domain.scrap.ScrapId;
 import com.akak4456.inmunity.InmunityApplication;
-import com.akak4456.persistent.BoardRepository;
 import com.akak4456.persistent.FileUploadRepository;
 import com.akak4456.persistent.MemberRepository;
 import com.akak4456.persistent.RecommendOrOppositeRepository;
-import com.akak4456.persistent.ReplyRepository;
 import com.akak4456.persistent.ScrapRepository;
+import com.akak4456.persistent.board.BoardRepository;
+import com.akak4456.persistent.reply.ReplyRepository;
 import com.akak4456.service.member.MemberService;
 import com.akak4456.vo.MemberVO;
 
@@ -49,13 +50,13 @@ public class MemberServiceTest {
 	private MemberService memberService;
 	
 	@Autowired
-	private BoardRepository boardRepo;
+	private BoardRepository<Board> boardRepo;
 	@Autowired
 	private FileUploadRepository fileUploadRepo;
 	@Autowired
 	private MemberRepository memberRepo; 
 	@Autowired
-	private ReplyRepository replyRepo;
+	private ReplyRepository<Reply> replyRepo;
 	@Autowired
 	private RecommendOrOppositeRepository roRepo;
 	@Autowired

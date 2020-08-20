@@ -26,17 +26,18 @@ import com.akak4456.domain.member.Role;
 import com.akak4456.domain.recommendoropposite.RecommendOrOpposite;
 import com.akak4456.domain.recommendoropposite.RecommendOrOppositeEnum;
 import com.akak4456.domain.recommendoropposite.RecommendOrOppositeId;
-import com.akak4456.domain.reply.FreeReply;
+import com.akak4456.domain.reply.Reply;
 import com.akak4456.domain.scrap.Scrap;
 import com.akak4456.domain.scrap.ScrapId;
 import com.akak4456.exception.RecommendOrOppositeAlreadyExist;
 import com.akak4456.inmunity.InmunityApplication;
-import com.akak4456.persistent.BoardRepository;
 import com.akak4456.persistent.FileUploadRepository;
 import com.akak4456.persistent.MemberRepository;
 import com.akak4456.persistent.RecommendOrOppositeRepository;
-import com.akak4456.persistent.ReplyRepository;
 import com.akak4456.persistent.ScrapRepository;
+import com.akak4456.persistent.board.BoardRepository;
+import com.akak4456.persistent.reply.ReplyRepository;
+import com.akak4456.service.board.BoardService;
 import com.akak4456.vo.PageMaker;
 import com.akak4456.vo.PageVO;
 
@@ -46,18 +47,18 @@ import lombok.extern.java.Log;
 @SpringBootTest(classes = InmunityApplication.class)
 @Log
 @Commit
-public class BoardServiceTest {
+public abstract class BoardServiceTest<B extends Board, R extends Reply> {
 	@Autowired
-	private BoardRepository boardRepo;
+	protected BoardRepository<B> boardRepo;
 	@Autowired
 	private FileUploadRepository fileUploadRepo;
 	@Autowired
 	private MemberRepository memberRepo; 
 	@Autowired
-	private BoardService boardService;
+	private BoardService<B> boardService;
 	
 	@Autowired
-	private ReplyRepository replyRepo;
+	private ReplyRepository<R> replyRepo;
 	
 	@Autowired
 	private RecommendOrOppositeRepository roRepo;
@@ -68,6 +69,9 @@ public class BoardServiceTest {
 	private MemberEntity member;
 	
 	private MemberEntity member2;
+	protected abstract void makeBoard(MemberEntity member);
+	protected abstract B makeOneBoard(String title,String content,MemberEntity member,List<BoardFileUpload> boardFileUpload);
+	protected abstract R makeOneReply(String reply,MemberEntity member,B board);
 	@Before
 	public void setUp() {
 		fileUploadRepo.deleteAll();
@@ -87,28 +91,25 @@ public class BoardServiceTest {
 		}else {
 			member2 = memberRepo.findById("akak4478@naver.com").get();
 		}
-		for(int i=0;i<=205;i++) {
-			FreeBoard board = FreeBoard.builder()
-								.title("title" + i)
-								.content("content" + i)
-								.member(member)
-								.build();
-			
-			boardRepo.save(board);
-		}
+		makeBoard(member);
+		/*
+		 * for(int i=0;i<=205;i++) { FreeBoard board = FreeBoard.builder()
+		 * .title("title" + i) .content("content" + i) .member(member) .build();
+		 * 
+		 * boardRepo.save(board); }
+		 */
 	}
-	
+	@Test
+	public void initTest() {
+		
+	}
 	@Test
 	public void addTest() {
 		long cnt = boardRepo.count();
 		List<BoardFileUpload> boardFileUpload = new ArrayList<>();
 		boardFileUpload.add(BoardFileUpload.builder().uploadPath("2020/01/01").uploadFileName("name").build());
 		boardFileUpload.add(BoardFileUpload.builder().uploadPath("2020/01/01").uploadFileName("name2").build());
-		FreeBoard board = FreeBoard.builder()
-							.title("title")
-							.content("content")
-							.member(member)
-							.fileUpload(boardFileUpload).build();
+		B board = makeOneBoard("title","content",member,boardFileUpload);
 		log.info("addBoard query start");
 		boardService.addBoard(board);
 		log.info("addBoard query done");
@@ -120,9 +121,9 @@ public class BoardServiceTest {
 		Pageable pageable = new PageVO(0).makePageble(0,"bno");
 		//pageVO에 1보다 작은 값을 넣는 것은 예외상황. 정상 동작하는지 확인. 첫번째 페이지
 		log.info("getListWithPaging query start");
-		Page<Board> page = boardService.getListWithPaging(null, null, pageable);
+		Page<B> page = boardService.getListWithPaging(null, null, pageable);
 		log.info("getListWithPaging query done");
-		PageMaker<Board> pageMaker = new PageMaker<Board>(page);
+		PageMaker<B> pageMaker = new PageMaker<B>(page);
 		pageTest(pageMaker,true,1,10,21,-1,11);
 		
 		pageable = new PageVO(2).makePageble(0,"bno");
@@ -130,7 +131,7 @@ public class BoardServiceTest {
 		log.info("getListWithPaging query start");
 		page = boardService.getListWithPaging(null, null, pageable);
 		log.info("getListWithPaging query done");
-		pageMaker = new PageMaker<Board>(page);
+		pageMaker = new PageMaker<B>(page);
 		pageTest(pageMaker,true,2,10,21,-1,11);
 		
 		pageable = new PageVO(10).makePageble(0,"bno");
@@ -138,7 +139,7 @@ public class BoardServiceTest {
 		log.info("getListWithPaging query start");
 		page = boardService.getListWithPaging(null, null, pageable);
 		log.info("getListWithPaging query done");
-		pageMaker = new PageMaker<Board>(page);
+		pageMaker = new PageMaker<B>(page);
 		pageTest(pageMaker,true,10,10,21,-1,11);
 		
 		pageable = new PageVO(11).makePageble(0,"bno");
@@ -146,7 +147,7 @@ public class BoardServiceTest {
 		log.info("getListWithPaging query start");
 		page = boardService.getListWithPaging(null, null, pageable);
 		log.info("getListWithPaging query done");
-		pageMaker = new PageMaker<Board>(page);
+		pageMaker = new PageMaker<B>(page);
 		pageTest(pageMaker,true,11,10,21,10,21);
 		
 		pageable = new PageVO(20).makePageble(0,"bno");
@@ -154,7 +155,7 @@ public class BoardServiceTest {
 		log.info("getListWithPaging query start");
 		page = boardService.getListWithPaging(null, null, pageable);
 		log.info("getListWithPaging query done");
-		pageMaker = new PageMaker<Board>(page);
+		pageMaker = new PageMaker<B>(page);
 		pageTest(pageMaker,true,20,10,21,10,21);
 		
 		pageable = new PageVO(21).makePageble(0,"bno");
@@ -162,7 +163,7 @@ public class BoardServiceTest {
 		log.info("getListWithPaging query start");
 		page = boardService.getListWithPaging(null, null, pageable);
 		log.info("getListWithPaging query done");
-		pageMaker = new PageMaker<Board>(page);
+		pageMaker = new PageMaker<B>(page);
 		pageTest(pageMaker,true,21,1,21,20,-1);
 		
 		pageable = new PageVO(30).makePageble(0,"bno");
@@ -170,11 +171,11 @@ public class BoardServiceTest {
 		log.info("getListWithPaging query start");
 		page = boardService.getListWithPaging(null, null, pageable);
 		log.info("getListWithPaging query done");
-		pageMaker = new PageMaker<Board>(page);
+		pageMaker = new PageMaker<B>(page);
 		pageTest(pageMaker,false,30,1,21,20,-1);
 	}
 	private void pageTest(
-			PageMaker<Board> pageMaker,
+			PageMaker<B> pageMaker,
 			boolean isaccessible,
 			int currentPageNum,
 			int currentPageListSize,
@@ -198,7 +199,7 @@ public class BoardServiceTest {
 	}
 	@Test
 	public void getOneTest() {
-		FreeBoard board =FreeBoard.builder().title("new title").content("new content").build();
+		B board =makeOneBoard("title","content",member,null);
 		boardService.addBoard(board);
 		log.info("getOne query start");
 		Board getBoard = boardService.getOne(board.getBno());
@@ -211,11 +212,7 @@ public class BoardServiceTest {
 		List<BoardFileUpload> boardFileUpload = new ArrayList<>();
 		boardFileUpload.add(BoardFileUpload.builder().uploadPath("2020/01/01").uploadFileName("name").build());
 		boardFileUpload.add(BoardFileUpload.builder().uploadPath("2020/01/01").uploadFileName("name2").build());
-		FreeBoard board = FreeBoard.builder()
-							.title("title")
-							.content("content")
-							.member(member)
-							.fileUpload(boardFileUpload).build();
+		B board = makeOneBoard("title","content",member,boardFileUpload);
 		boardService.addBoard(board);
 		assertEquals(fileUploadRepo.count(),2L);
 		List<BoardFileUpload> updateFileUpload = new ArrayList<>();
@@ -240,13 +237,9 @@ public class BoardServiceTest {
 		List<BoardFileUpload> boardFileUpload = new ArrayList<>();
 		boardFileUpload.add(BoardFileUpload.builder().uploadPath("2020/01/01").uploadFileName("name").build());
 		boardFileUpload.add(BoardFileUpload.builder().uploadPath("2020/01/01").uploadFileName("name2").build());
-		FreeBoard board = FreeBoard.builder()
-							.title("title")
-							.content("content")
-							.member(member)
-							.fileUpload(boardFileUpload).build();
+		B board = makeOneBoard("title","content",member,boardFileUpload);
 		boardService.addBoard(board);
-		FreeReply reply = FreeReply.builder().reply("reply").member(member).board(board).build();
+		R reply = makeOneReply("reply",member,board);
 		replyRepo.save(reply);
 		RecommendOrOppositeId id1 = new RecommendOrOppositeId(board.getBno(),member.getUseremail());
 		RecommendOrOpposite ro = RecommendOrOpposite.builder().id(id1).board(board).member(member).recommendOrOpposite(RecommendOrOppositeEnum.Recommend).build();
@@ -268,10 +261,7 @@ public class BoardServiceTest {
 	
 	@Test(expected=RecommendOrOppositeAlreadyExist.class)
 	public void recommendOrOppositeTest() {
-		FreeBoard board = FreeBoard.builder()
-							.title("title")
-							.content("content")
-							.member(member).build();
+		B board = makeOneBoard("title","content",member,null);
 		boardService.addBoard(board);
 		
 		//추천 되는 지 확인
@@ -298,12 +288,5 @@ public class BoardServiceTest {
 		log.info("upOppositecnt query done");
 		boardService.upRecommendcnt(ro1);//exception 이 발생해야 함
 		
-	}
-	@Test
-	public void getListWithUseremailTest() {
-		Pageable pageable = new PageVO(1).makePageble(0, "bno");
-		log.info("getListWithUseremail query start");
-		boardService.getListWithUseremail("akak4456@naver.com", pageable);
-		log.info("getListWithUseremail query done");
 	}
 }

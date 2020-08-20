@@ -10,14 +10,14 @@ import com.akak4456.domain.member.MemberEntity;
 import com.akak4456.domain.scrap.Scrap;
 import com.akak4456.domain.scrap.ScrapId;
 import com.akak4456.exception.ScrapAlreadyExist;
-import com.akak4456.persistent.BoardRepository;
 import com.akak4456.persistent.MemberRepository;
 import com.akak4456.persistent.ScrapRepository;
+import com.akak4456.persistent.board.BoardRepository;
 
 @Service
 public class ScrapServiceImpl implements ScrapService {
 	@Autowired
-	private BoardRepository boardRepo;
+	private BoardRepository<Board> boardRepo;
 	@Autowired
 	private MemberRepository memberRepo;
 	@Autowired
